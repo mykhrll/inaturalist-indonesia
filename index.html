@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iNaturalist Indonesia - Jelajahi Alam</title>
+    <meta name="description" content="Identifikasi tumbuhan, hewan, jamur, dan lebih banyak lagi sembari berkontribusi bagi atlas kehidupan di Bumi.">
+    <meta name="theme-color" content="#74ac00">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js for Lacak feature -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ===== NAVBAR: LOGGED OUT ===== -->
+    <nav class="navbar" id="navbar-loggedout">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="#" class="logo" onclick="navigateTo('view-home')">
+                    <span class="logo-i">i</span><span class="logo-text">Naturalist</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#" onclick="navigateTo('view-explore')">Jelajah</a></li>
+                    <li class="dropdown">
+                        <a href="#">Komunitas <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="openGenericPage('Orang')">Orang</a>
+                            <a href="#" onclick="openGenericPage('Proyek')">Proyek</a>
+                            <a href="#" onclick="openGenericPage('Jurnal')">Posting Jurnal</a>
+                            <a href="https://forum.inaturalist.org" target="_blank">Forum</a>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Lainnya <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu dropdown-wide">
+                            <a href="#" onclick="openGenericPage('Info Taksa')">Info Taksa</a>
+                            <a href="#" onclick="openGenericPage('Panduan')">Panduan</a>
+                            <a href="#" onclick="openGenericPage('Tempat')">Tempat</a>
+                            <a href="#" onclick="openGenericPage('Statistik')">Statistik Situs</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="https://help.inaturalist.org" target="_blank">Bantuan</a>
+                            <a href="https://help.inaturalist.org" target="_blank">Memulai</a>
+                            <a href="https://help.inaturalist.org" target="_blank">Video Tutorial</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="donate-link" onclick="openGenericPage('Donasi')"><i class="fas fa-heart"></i> Donasi</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <a href="#" class="btn-donate-nav"><i class="fas fa-heart"></i> Donasi</a>
+                <a href="#" class="nav-auth-link" id="btn-open-login">Masuk atau Daftar</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== NAVBAR: LOGGED IN ===== -->
+    <nav class="navbar navbar-loggedin hidden" id="navbar-loggedin">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="#" class="logo" onclick="navigateTo('view-dashboard')">
+                    <span class="logo-i">i</span><span class="logo-text">Naturalist</span>
+                </a>
+                <div class="nav-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cari" id="nav-search-input">
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#" onclick="navigateTo('view-explore')">Jelajah</a></li>
+                    <li><a href="#" onclick="navigateTo('view-lacak')">Pengamatan Anda</a></li>
+                    <li class="dropdown">
+                        <a href="#">Komunitas <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="openGenericPage('Orang')">Orang</a>
+                            <a href="#" onclick="openGenericPage('Proyek')">Proyek</a>
+                            <a href="#" onclick="openGenericPage('Jurnal')">Posting Jurnal</a>
+                            <a href="https://forum.inaturalist.org" target="_blank">Forum</a>
+                        </div>
+                    </li>
+                    <li><a href="#" onclick="navigateTo('view-identifikasi')">Kenali</a></li>
+                    <li class="dropdown">
+                        <a href="#">Lainnya <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu dropdown-wide">
+                            <a href="#" onclick="openGenericPage('Info Taksa')">Info Taksa</a>
+                            <a href="#" onclick="openGenericPage('Panduan')">Panduan</a>
+                            <a href="#" onclick="openGenericPage('Tempat')">Tempat</a>
+                            <a href="#" onclick="openGenericPage('Statistik')">Statistik Situs</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="https://help.inaturalist.org" target="_blank">Bantuan</a>
+                            <a href="https://help.inaturalist.org" target="_blank">Video Tutorial</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="donate-link"><i class="fas fa-heart"></i> Donasi</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <button class="btn-upload-nav" onclick="navigateTo('view-identifikasi')">
+                    <i class="fas fa-plus"></i> Unggah
+                </button>
+                <a href="#" class="nav-icon-btn" title="Pesan"><i class="fas fa-envelope"></i></a>
+                <a href="#" class="nav-icon-btn" title="Notifikasi"><i class="fas fa-bell"></i></a>
+                <div class="profile-trigger" id="profile-trigger">
+                    <div class="nav-avatar" id="nav-avatar-btn" title="Profil">
+                        <span id="avatar-content">U</span>
+                    </div>
+                    <i class="fas fa-chevron-down profile-caret"></i>
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <div class="profile-dropdown-header" id="profile-name">Pengguna</div>
+                        <a href="#" onclick="navigateTo('view-dashboard')"><i class="fas fa-tachometer-alt"></i> Dasbor</a>
+                        <a href="#" onclick="navigateTo('view-lacak')"><i class="fas fa-eye"></i> Ubah Pengamatan</a>
+                        <a href="#" onclick="openGenericPage('Kalender')"><i class="fas fa-calendar"></i> Kalender</a>
+                        <a href="#" onclick="navigateTo('view-identifikasi')"><i class="fas fa-leaf"></i> Identifikasi</a>
+                        <a href="#" onclick="openGenericPage('Daftar')"><i class="fas fa-list"></i> Daftar</a>
+                        <a href="#" onclick="openGenericPage('Jurnal')"><i class="fas fa-book"></i> Jurnal</a>
+                        <a href="#" onclick="openGenericPage('Favorit')"><i class="fas fa-star"></i> Favorit</a>
+                        <a href="#" onclick="navigateTo('view-kontribusi')"><i class="fas fa-folder"></i> Proyek</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="openGenericPage('Profil')"><i class="fas fa-user"></i> Profil</a>
+                        <a href="#" onclick="openGenericPage('Pengaturan')"><i class="fas fa-cog"></i> Pengaturan Akun</a>
+                        <div class="dropdown-divider"></div>
+                        <button class="logout-btn" id="btn-logout"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== MAIN CONTENT (SPA) ===== -->
+    <main id="app-container">
+
+        <!-- ==================== VIEW: HOME (Logged Out) ==================== -->
+        <!-- ==================== VIEW: HOME (Logged Out) ==================== -->
+        <section id="view-home" class="view active">
+            <!-- Inject iNaturalist Welcome V2 Stylesheet just for this section -->
+            <link rel="stylesheet" media="screen" href="https://www.inaturalist.org/assets/welcome_v2-8cf8582af3edeac6142ae93cb3cfc9bb94c388bc3900ce4de4a531439e1dcd56.css">
+            
+            <main class="wv2">
+                <div class="wv2-section wv2-section--hero text-center">
+                    <video aria-hidden="true" autoplay="autoplay" class="wv2-hero__video" loop="loop" muted="muted" playsinline="playsinline" preload="none">
+                        <source src="https://www.inaturalist.org/assets/welcome_v2/hero_video-a59747dd3e25238fbed0f5907a864a83704bc41b066480d14c2ddba36c8d297f.webm" type="video/webm">
+                        <source src="https://www.inaturalist.org/assets/welcome_v2/hero_video-b653e08f217698f1090c46a0f319ac8ff30f9f2a0df6c6c1116d9114d5dd6506.mp4" type="video/mp4">
+                    </video>
+                    <div class="wv2-hero__content">
+                        <h1>Tempat keingintahuan Anda berkontribusi pada ilmu pengetahuan.</h1>
+                        <p class="wv2-hero__sub">Identifikasi tumbuhan, hewan, jamur, dan lebih banyak lagi sembari berkontribusi bagi atlas kehidupan di Bumi.</p>
+                        <button class="btn wv2-btn--white btn-lg" onclick="document.getElementById('loginModal').style.display='flex'">Bergabunglah dengan komunitas</button>
+                        <p class="wv2-hero__tagline">Gratis, nirlaba, didukung komunitas.</p>
+                    </div>
+                </div>
+
+                <div class="wv2-section wv2-section--light text-center">
+                    <h2>Dengan iNaturalist, Anda dapat:</h2>
+                    <div class="wv2-features">
+                        <div class="wv2-feature">
+                            <div class="wv2-feature__icon-wrap">
+                                <img class="wv2-feature__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/identify_verb-ecb20f0308f02aefa22e990db82bdb1222558dd2cf77e81c6a73c2108ca15b06.svg">
+                            </div>
+                            <h3>Identifikasi</h3>
+                            <p>tumbuhan, hewan, jamur, &amp; lainnya</p>
+                        </div>
+                        <div class="wv2-feature">
+                            <div class="wv2-feature__icon-wrap">
+                                <img class="wv2-feature__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/track-e95399ff148fcde3a1ea0d6feb36cebfad481a7a78cbe648ce2c6d8c4a91e493.svg">
+                            </div>
+                            <h3>Lacak</h3>
+                            <p>spesies yang Anda temui</p>
+                        </div>
+                        <div class="wv2-feature">
+                            <div class="wv2-feature__icon-wrap">
+                                <img class="wv2-feature__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/discover-d91ef9117ed9a0980041deafeba406df32aa7a18ed2a9fdea64e0f0ca73e4bc0.svg">
+                            </div>
+                            <h3>Temukan</h3>
+                            <p>alam di sekitar</p>
+                        </div>
+                        <div class="wv2-feature">
+                            <div class="wv2-feature__icon-wrap">
+                                <img class="wv2-feature__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/contribute-669e69c1cc18e271378dbb5579450bfba75a66afa718fd123b76967dcc753060.svg">
+                            </div>
+                            <h3>Kontribusi</h3>
+                            <p>pada ilmu sains nyata</p>
+                        </div>
+                        <div class="wv2-feature">
+                            <div class="wv2-feature__icon-wrap">
+                                <img class="wv2-feature__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/learn-85069c8eff436efe8c6179a2db2dad4de7091842415e683328cbeb63c1e4adb5.svg">
+                            </div>
+                            <h3>Belajar</h3>
+                            <p>dari komunitas global</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wv2-section wv2-section--white wv2-section--stories text-center">
+                    <h2>Kekuatan sains komunitas</h2>
+                    <div class="wv2-stories-row">
+                        <a class="wv2-story" target="_blank" rel="noopener" href="https://tr.ee/FYNsVb">
+                            <div class="wv2-story__image">
+                                <img alt="Frosted phoenix moth" src="https://www.inaturalist.org/assets/welcome_v2/frosted_phoenix-735939c26e5a5caf3f6f5384a29ac4ea9fcbee376b4f2848f994d70ba692041f.webp">
+                                <h3>Menemukan kembali spesies yang hilang</h3>
+                            </div>
+                            <div class="wv2-story__body">
+                                <p>Ngengat Frosted Phoenix tidak pernah terlihat dalam beberapa dekade dan sempat dianggap punah — hingga turis menemukannya tanpa sengaja.</p>
+                                <p class="wv2-story__credit">Dilihat oleh pav_johnsson di Selandia Baru</p>
+                            </div>
+                        </a>
+                        <a class="wv2-story" target="_blank" rel="noopener" href="https://tr.ee/j29kgK">
+                            <div class="wv2-story__image">
+                                <img alt="Praying mantis" src="https://www.inaturalist.org/assets/welcome_v2/inat-82ef9af16c60a286fa7f2a9ee72e142f04f715a8670e64514142654988d8dd0d.webp">
+                                <h3>Menemukan spesies baru bagi ilmu pengetahuan</h3>
+                            </div>
+                            <div class="wv2-story__body">
+                                <p><span class="italic">Inimia nat</span> — disingkat menjadi <span class="italic">I. nat</span> — adalah spesies belalang sentadu baru yang ditemukan oleh seorang wanita.</p>
+                                <p class="wv2-story__credit">Dilihat oleh glendawalter di Australia</p>
+                            </div>
+                        </a>
+                        <a class="wv2-story" target="_blank" rel="noopener" href="https://tr.ee/hQZIFH">
+                            <div class="wv2-story__image">
+                                <img alt="California newt" src="https://www.inaturalist.org/assets/welcome_v2/california_newt-8e9a77530dd68f22f5b80bbafbaf47ba15681fe5d1db56848b1b170300bc02d9.webp">
+                                <h3>Melindungi ekosistem lokal</h3>
+                            </div>
+                            <div class="wv2-story__body">
+                                <p>Sekelompok sukarelawan berkumpul melalui iNaturalist untuk melindungi amfibi yang bermigrasi melintasi jalan raya sibuk.</p>
+                                <p class="wv2-story__credit">Dilihat oleh tcuriel di Amerika Serikat</p>
+                            </div>
+                        </a>
+                    </div>
+                    <a class="btn wv2-btn--green" href="#" onclick="openGenericPage('Blog')">Baca cerita lebih lanjut</a>
+                </div>
+
+                <div class="wv2-section wv2-section--light text-center">
+                    <h2>Setiap observasi memiliki cerita</h2>
+                    <dl class="wv2-observation">
+                        <div class="wv2-observation__col">
+                            <div class="wv2-observation__row">
+                                <dt>Siapa</dt>
+                                <dd class="wv2-observation__who">
+                                    <img class="wv2-observation__avatar" alt="" src="https://www.inaturalist.org/assets/welcome_v2/observations/sample_153739963_user-90c97fd43f43ced80780d53e8e3bdcfc6a1eabb43149ca0210bff1f39cbf0267.webp">
+                                    <span>tiwane</span>
+                                </dd>
+                            </div>
+                            <div class="wv2-observation__row wv2-observation__row--sep">
+                                <dt>Apa</dt>
+                                <dd>
+                                    <img class="wv2-observation__photo" alt="Green frog on leaf" src="https://www.inaturalist.org/assets/welcome_v2/observations/sample_153739963_observation-512c10c26af39b287ba224fa9463910df5cde5373ebd62fd26efacb85119fe5c.webp">
+                                    <div class="wv2-taxon">
+                                        <img class="wv2-taxon__thumb" alt="" src="https://www.inaturalist.org/assets/welcome_v2/observations/sample_153739963_taxon-354ec64e663d7cb52876cbc5ab79fd69dd86528fe7196a4a65399bebe4f1e9a8.webp">
+                                        <div class="wv2-taxon__names">
+                                            <p>Emerald Glass Frog</p>
+                                            <em>Espadarana prosoblepon</em>
+                                        </div>
+                                    </div>
+                                </dd>
+                            </div>
+                        </div>
+                        <div class="wv2-observation__col">
+                            <div class="wv2-observation__row">
+                                <dt>Di mana</dt>
+                                <dd>
+                                    <img class="wv2-observation__map" alt="Map" src="https://www.inaturalist.org/assets/welcome_v2/observation_example_map-183f5d95e90edff27391d938ed7131d1acb2db5e2e2d18d7d8dc1a6e7522f390.webp">
+                                    <div class="wv2-location">
+                                        <img class="wv2-location__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/icon-locationpin-f6ae470a068e1dfdf7b4e46baa84fdb018f701da6e7c5798b7c758834dd82e40.svg">
+                                        <span>Barrio Flaminia, Heredia, Sarapiquí, Costa Rica</span>
+                                    </div>
+                                </dd>
+                            </div>
+                            <div class="wv2-observation__row wv2-observation__row--sep">
+                                <dt>Kapan</dt>
+                                <dd>
+                                    <div class="wv2-location">
+                                        <img class="wv2-location__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/icon-datetime-0c1f6ed21075bc8ad67f925e95cc2ac992b4d328bdbb1cd50bc9e2c4f5ba2c65.svg">
+                                        <span>Mar 25, 2023 · 8:38 PM CST</span>
+                                    </div>
+                                </dd>
+                            </div>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="wv2-section wv2-section--white wv2-section--stats text-center">
+                    <div class="wv2-stats">
+                        <div class="wv2-stats__cell">
+                            <p class="wv2-stat__number">300M<span class="wv2-stat__plus">+</span></p>
+                            <p class="wv2-stat__label">observasi berkontribusi pada sains</p>
+                        </div>
+                        <div class="wv2-stats__cell">
+                            <p class="wv2-stat__number">550.000<span class="wv2-stat__plus">+</span></p>
+                            <p class="wv2-stat__label">spesies terdokumentasi di dunia</p>
+                        </div>
+                        <div class="wv2-stats__cell">
+                            <p class="wv2-stat__number">7.000<span class="wv2-stat__plus">+</span></p>
+                            <p class="wv2-stat__label">makalah mengutip data iNaturalist</p>
+                        </div>
+                        <div class="wv2-stats__cell">
+                            <p class="wv2-stat__number">500<span class="wv2-stat__plus">+</span></p>
+                            <p class="wv2-stat__label">spesies ditemukan kembali oleh komunitas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wv2-section wv2-section--light wv2-section--how">
+                    <div class="wv2-steps">
+                        <div class="wv2-step">
+                            <span class="wv2-step__num">1</span>
+                            <div class="wv2-step__content">
+                                <div class="wv2-step__heading">
+                                    <h3>Amati</h3>
+                                    <img class="wv2-step__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/icon-camera-0448c8a57165c0f5add623d8d2daf61d674df7367298ffe151695d8339efdb3b.svg">
+                                </div>
+                                <p>Buka web dan unggah foto tumbuhan, hewan, atau jamur liar dari sekitar Anda.</p>
+                            </div>
+                        </div>
+                        <div class="wv2-step">
+                            <span class="wv2-step__num">2</span>
+                            <div class="wv2-step__content">
+                                <div class="wv2-step__heading">
+                                    <h3>Identifikasi</h3>
+                                    <img class="wv2-step__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/icon-identify-573507f61c439a843ed39edde862fdf3efb25808e9ab934a831a903ce72d59c7.svg">
+                                </div>
+                                <p>Sistem kami memberi saran identifikasi instan, dan komunitas global membantu memastikannya.</p>
+                            </div>
+                        </div>
+                        <div class="wv2-step">
+                            <span class="wv2-step__num">3</span>
+                            <div class="wv2-step__content">
+                                <div class="wv2-step__heading">
+                                    <h3>Kontribusi</h3>
+                                    <img class="wv2-step__icon" alt="" src="https://www.inaturalist.org/assets/welcome_v2/icon-globe-0cc9ad2b40aa004e78d7aadc289e3a0f0b0ff26143554e6f611340e74b86842a.svg">
+                                </div>
+                                <p>Observasi Anda menjadi data terbuka — digunakan ilmuwan di seluruh dunia.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+                <div class="wv2-section wv2-section--white">
+                    <div class="wv2-why">
+                        <strong class="wv2-why__label">Mengapa?</strong>
+                        <p class="wv2-why__body">Alam berubah lebih cepat dari sebelumnya, jadi kami membutuhkan <span class="underline">Anda</span> untuk membantu mencatat apa yang hidup dan di mana.</p>
+                    </div>
+                </div>
+
+                <div class="wv2-section wv2-section--white wv2-section--no-horizontal-padding">
+                    <div class="wv2-testimonials">
+                        <div class="wv2-carousel" data-carousel="data-carousel" data-initial-index="0">
+                            <div class="wv2-carousel__stage">
+                                <div class="wv2-carousel__track">
+                                    <div class="wv2-carousel__item">
+                                        <div class="wv2-testimonial">
+                                            <div class="wv2-testimonial__quote"><p>Ini benar-benar membantu saya mengidentifikasi spesies, sekaligus berinteraksi dengan orang-orang di seluruh dunia.</p></div>
+                                            <a class="wv2-testimonial__byline" target="_blank" href="https://www.inaturalist.org/people/dzivulajr_03">
+                                                <img class="wv2-testimonial__avatar" alt="Dzivula Gube" src="https://www.inaturalist.org/assets/welcome_v2/testimonial_gube-8bdfa0bdda48c931354c77c7c280e20df97a657f053f99ca45e6e7013116d1f3.webp">
+                                                <div>
+                                                    <p class="wv2-testimonial__name">Dzivula Gube</p>
+                                                    <p class="wv2-testimonial__title">Konservasionis Laut &amp; Fotografer Bawah Air, Kenya</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="wv2-carousel__item">
+                                        <div class="wv2-testimonial">
+                                            <div class="wv2-testimonial__quote"><p>Platform ini adalah ujung tombak sains ekologi.</p></div>
+                                            <a class="wv2-testimonial__byline" target="_blank" href="https://www.inaturalist.org/people/humanbyweight">
+                                                <img class="wv2-testimonial__avatar" alt="Chris Alice Kratzer" src="https://www.inaturalist.org/assets/welcome_v2/testimonial_kratzer-db39d7b09f6f3c0812fb3e1fadf876c66580a7f3302680243b66c2c07b7a876c.webp">
+                                                <div>
+                                                    <p class="wv2-testimonial__name">Chris Alice "Alie" Kratzer</p>
+                                                    <p class="wv2-testimonial__title">Penulis Buku Panduan di Owlfly LLC, AS</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wv2-section wv2-section--light">
+                    <div class="wv2-everyone">
+                        <div class="wv2-everyone__point"><h3>Semua orang adalah naturalis</h3><p>Jika Anda pernah melihat alam dan bertanya-tanya apa itu, iNaturalist hadir untuk Anda.</p></div>
+                        <div class="wv2-everyone__point"><h3>Anda bisa berdampak</h3><p>Setiap foto menjadi bagian rekam ilmiah global yang diandalkan para peneliti.</p></div>
+                        <div class="wv2-everyone__point"><h3><a target="_blank" rel="noopener" href="https://www.sfgate.com/local/article/inaturalist-app-bay-area-22092747.php">Tempat ternyaman di internet</a></h3><p>Datang untuk identifikasi, bertahan untuk komunitas dan sains.</p></div>
+                    </div>
+                </div>
+
+                <div class="wv2-section wv2-section--white">
+                    <div class="wv2-download">
+                        <div class="wv2-download__text"><h2>Unduh aplikasi iNaturalist</h2><p>Dapatkan identifikasi langsung &amp; berkontribusi pada sains</p></div>
+                        <div class="wv2-download__images"><img class="wv2-download__phone" alt="App" width="600" height="604" src="https://www.inaturalist.org/assets/welcome_v2/inaturalist-6fd2c5a0c38dcb5a8204b2eefd73fa981b2702edbde9c2672d51bf1385b83050.webp"></div>
+                        <div class="wv2-download__cta">
+                            <div class="wv2-store-badges">
+                                <a target="_blank" rel="noopener" href="https://apps.apple.com/app/apple-store/id6475737561?pt=475606&amp;ct=homepage&amp;mt=8"><img alt="App Store" class="wv2-store-badge" width="304" height="90" src="https://static.inaturalist.org/wiki_page_attachments/414-original.png"></a>
+                                <a target="_blank" rel="noopener" href="https://play.google.com/store/apps/details?id=org.inaturalist.android&amp;hl=en_US"><img alt="Google Play" class="wv2-store-badge" width="304" height="90" src="https://static.inaturalist.org/wiki_page_attachments/412-original.png"></a>
+                            </div>
+                            <p class="wv2-download__count">700.000+ Unduhan</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <div class="footer-col"><a href="https://www.inaturalist.org/pages/about" target="_blank">Tentang</a><a href="https://help.inaturalist.org" target="_blank">Bantuan</a><a href="https://forum.inaturalist.org" target="_blank">Forum</a><a href="#">Pers</a><a href="#">Pekerjaan</a></div>
+                    <div class="footer-col"><a href="https://www.inaturalist.org/blog" target="_blank">Blog Kami</a><a href="#">Panduan Komunitas</a><a href="#">Ketentuan Penggunaan</a><a href="#">Privasi</a></div>
+                    <div class="footer-col footer-actions">
+                        <div class="footer-buttons"><a href="https://www.inaturalist.org/donate" target="_blank" class="btn-footer-donate">DONASI</a><button class="btn-footer-store">TOKO</button></div>
+                        <div class="footer-social"><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-twitter"></i></a></div>
+                    </div>
+                </div>
+                <div class="footer-bottom"><p>Anggota Jaringan iNaturalist &bull; Didukung oleh perangkat lunak sumber terbuka</p></div>
+            </footer>
+        </section>
+
+        <!-- ==================== VIEW: DASHBOARD (Logged In) ==================== -->
+        <section id="view-dashboard" class="view">
+            <div class="dashboard-wrapper">
+                <div class="user-subnav">
+                    <div class="subnav-inner">
+                        <a href="#" class="subnav-link active" onclick="navigateTo('view-dashboard')">Halaman Utama</a>
+                        <a href="#" class="subnav-link" onclick="showComingSoon('Profil')">Profil</a>
+                        <a href="#" class="subnav-link" onclick="navigateTo('view-lacak')">Pengamatan</a>
+                        <a href="#" class="subnav-link" onclick="showComingSoon('Kalender')">Kalender</a>
+                        <a href="#" class="subnav-link" onclick="navigateTo('view-identifikasi')">ID</a>
+                        <a href="#" class="subnav-link" onclick="navigateTo('view-belajar')">Belajar</a>
+                        <a href="#" class="subnav-link" onclick="navigateTo('view-kontribusi')">Kontribusi</a>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-main">
+                        <div class="dash-tabs">
+                            <button class="dash-tab active">Semua Kabar</button>
+                            <button class="dash-tab">Konten Anda</button>
+                            <button class="dash-tab">Mengikuti</button>
+                        </div>
+                        <div class="dash-welcome-card">
+                            <h3><i class="fas fa-seedling"></i> Selamat Datang di iNaturalist!</h3>
+                            <p>Mari mulai perjalanan Anda menjelajahi keanekaragaman hayati Indonesia.</p>
+                            <div class="welcome-steps">
+                                <div class="welcome-step">
+                                    <div class="step-check"><i class="fas fa-camera"></i></div>
+                                    <div><strong>Identifikasi tumbuhan pertama Anda</strong><p>Upload foto & dapatkan klasifikasi, persebaran, fun fact, dan referensi jurnal</p></div>
+                                    <button class="btn-green btn-sm" onclick="navigateTo('view-identifikasi')">Mulai</button>
+                                </div>
+                                <div class="welcome-step">
+                                    <div class="step-check"><i class="fas fa-chart-line"></i></div>
+                                    <div><strong>Lacak pertumbuhan tumbuhan</strong><p>Pantau perubahan kondisi secara berkala dengan grafik visual</p></div>
+                                    <button class="btn-outline btn-sm" onclick="navigateTo('view-lacak')">Lacak</button>
+                                </div>
+                                <div class="welcome-step">
+                                    <div class="step-check"><i class="fas fa-search"></i></div>
+                                    <div><strong>Temukan keanekaragaman di sekitar Anda</strong><p>Jelajahi peta persebaran dan rekomendasi spesies per daerah</p></div>
+                                    <button class="btn-outline btn-sm" onclick="navigateTo('view-explore')">Jelajah</button>
+                                </div>
+                                <div class="welcome-step">
+                                    <div class="step-check"><i class="fas fa-trophy"></i></div>
+                                    <div><strong>Berkontribusi dan dapatkan badge</strong><p>Bantu identifikasi dan kumpulkan poin citizen science</p></div>
+                                    <button class="btn-outline btn-sm" onclick="navigateTo('view-kontribusi')">Kontribusi</button>
+                                </div>
+                                <div class="welcome-step">
+                                    <div class="step-check"><i class="fas fa-graduation-cap"></i></div>
+                                    <div><strong>Belajar ekologi tumbuhan interaktif</strong><p>Kuis, materi singkat, dan peran ekologis spesies</p></div>
+                                    <button class="btn-outline btn-sm" onclick="navigateTo('view-belajar')">Belajar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dash-empty"><i class="fas fa-stream"></i><p>Belum ada kabar terbaru. Mulai unggah pengamatan atau ikuti naturalis lain!</p></div>
+                    </div>
+                    <div class="dashboard-sidebar">
+                        <button class="btn-upload-big" onclick="navigateTo('view-identifikasi')"><i class="fas fa-plus-circle"></i> Tambahkan Pengamatan</button>
+                        <div class="sidebar-card">
+                            <h4>Blog iNaturalist</h4>
+                            <div class="sidebar-item"><span class="sidebar-date">Jun 2026</span><a href="https://www.inaturalist.org/blog" target="_blank">Pembaruan Fitur: Identifikasi AI yang Lebih Akurat</a></div>
+                            <div class="sidebar-item"><span class="sidebar-date">Jun 2026</span><a href="https://www.inaturalist.org/blog" target="_blank">Hasil City Nature Challenge 2026</a></div>
+                        </div>
+                        <div class="sidebar-card">
+                            <h4>Aktivitas Forum</h4>
+                            <div class="sidebar-item"><a href="https://forum.inaturalist.org" target="_blank">Cara mengidentifikasi anggrek di Indonesia</a><span class="sidebar-meta">12 balasan • 2 jam lalu</span></div>
+                            <div class="sidebar-item"><a href="https://forum.inaturalist.org" target="_blank">Tips fotografi makro untuk identifikasi</a><span class="sidebar-meta">8 balasan • 5 jam lalu</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW A: IDENTIFIKASI (AI-Powered) ==================== -->
+        <section id="view-identifikasi" class="view">
+            <div class="page-header-bar">
+                <div class="page-header-inner">
+                    <h2><i class="fas fa-leaf"></i> Identifikasi Tumbuhan (AI-Powered)</h2>
+                    <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>
+                </div>
+            </div>
+            <div class="feature-description">
+                <p><strong>Fitur Pengembangan:</strong> Selain identifikasi spesies, sistem ini menampilkan <em>persebaran di Indonesia & dunia</em>, <em>karakteristik habitat</em>, <em>fun fact</em>, dan <em>minimal 3 referensi jurnal open access (APA Style + DOI aktif)</em>.</p>
+            </div>
+            <div class="identify-wrapper">
+                <div class="identify-container">
+                    <div class="upload-panel" id="upload-area">
+                        <div class="upload-placeholder" id="upload-placeholder">
+                            <div class="upload-icon-wrap"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <h3>Seret & lepas foto atau</h3>
+                            <input type="file" id="image-input" accept="image/*" hidden>
+                            <button class="btn-blue" onclick="document.getElementById('image-input').click()"><i class="fas fa-folder-open"></i> Pilih berkas</button>
+                            <p class="upload-hint">Mendukung format JPG, PNG, WEBP. Maks 4MB.</p>
+                        </div>
+                        <div id="image-preview-container" class="hidden">
+                            <img id="image-preview" src="" alt="Preview">
+                            <div class="preview-actions">
+                                <button class="btn-outline" onclick="document.getElementById('image-input').click()"><i class="fas fa-redo"></i> Ganti Foto</button>
+                                <button class="btn-green btn-analyze" id="btn-analyze"><i class="fas fa-magic"></i> Analisis Sekarang</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="results-panel hidden" id="results-area">
+                        <div class="loading-state hidden" id="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>AI sedang menganalisis foto tanaman Anda...</p>
+                            <p class="loading-sub">Menggunakan Llama 4 Scout Vision</p>
+                        </div>
+                        <div class="result-content hidden" id="result-content"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW B: LACAK (Track/Monitor) ==================== -->
+        <section id="view-lacak" class="view">
+            <div class="page-header-bar">
+                <div class="page-header-inner">
+                    <h2><i class="fas fa-chart-line"></i> Lacak — Pemantauan Pertumbuhan Tumbuhan</h2>
+                    <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>
+                </div>
+            </div>
+            <div class="feature-description">
+                <p><strong>Fitur Pengembangan:</strong> Sistem pemantauan pertumbuhan & perkembangan tumbuhan secara berkala. Mencatat kondisi tumbuhan pada waktu berbeda, menampilkan <em>riwayat pertumbuhan</em>, <em>fase berbunga/berbuah</em>, dan <em>perubahan kondisi</em> dalam bentuk grafik dan dokumentasi visual.</p>
+            </div>
+            <div class="lacak-wrapper">
+                <div class="lacak-container">
+                    <!-- Add New Observation -->
+                    <div class="lacak-panel lacak-add">
+                        <h3><i class="fas fa-plus-circle"></i> Tambahkan Catatan Pemantauan</h3>
+                        <div class="lacak-form">
+                            <div class="form-row">
+                                <div class="form-group"><label>Nama Tumbuhan</label><input type="text" id="lacak-nama" placeholder="Contoh: Anggrek Bulan"></div>
+                                <div class="form-group"><label>Tanggal Pemantauan</label><input type="date" id="lacak-tanggal"></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Tinggi Tanaman (cm)</label><input type="number" id="lacak-tinggi" placeholder="Contoh: 25"></div>
+                                <div class="form-group"><label>Jumlah Daun</label><input type="number" id="lacak-daun" placeholder="Contoh: 8"></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Fase Pertumbuhan</label>
+                                    <select id="lacak-fase">
+                                        <option value="Perkecambahan">🌱 Perkecambahan</option>
+                                        <option value="Vegetatif">🌿 Vegetatif</option>
+                                        <option value="Berbunga">🌸 Berbunga</option>
+                                        <option value="Berbuah">🍎 Berbuah</option>
+                                        <option value="Dormansi">🍂 Dormansi</option>
+                                    </select>
+                                </div>
+                                <div class="form-group"><label>Kondisi Kesehatan</label>
+                                    <select id="lacak-kondisi">
+                                        <option value="Sehat">✅ Sehat</option>
+                                        <option value="Stres Ringan">⚠️ Stres Ringan</option>
+                                        <option value="Terserang Hama">🐛 Terserang Hama</option>
+                                        <option value="Layu">🥀 Layu</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>Catatan Tambahan</label><textarea id="lacak-catatan" placeholder="Muncul tunas baru, mulai berbunga, dll." rows="2"></textarea></div>
+                            <div class="form-group"><label>Foto Dokumentasi</label><input type="file" id="lacak-foto" accept="image/*"></div>
+                            <button class="btn-green" onclick="addLacakEntry()"><i class="fas fa-save"></i> Simpan Catatan</button>
+                        </div>
+                    </div>
+
+                    <!-- Growth Chart -->
+                    <div class="lacak-panel lacak-chart">
+                        <h3><i class="fas fa-chart-area"></i> Grafik Pertumbuhan</h3>
+                        <canvas id="growthChart" height="250"></canvas>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="lacak-panel lacak-timeline">
+                        <h3><i class="fas fa-history"></i> Riwayat Pemantauan</h3>
+                        <div id="lacak-timeline-list">
+                            <!-- Sample entries -->
+                            <div class="timeline-entry">
+                                <div class="timeline-dot fase-Berbunga"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header"><strong>Anggrek Bulan</strong><span class="timeline-date">15 Juni 2026</span></div>
+                                    <div class="timeline-details">
+                                        <span>📏 Tinggi: 35 cm</span><span>🍃 Daun: 12</span><span>🌸 Fase: Berbunga</span><span>✅ Kondisi: Sehat</span>
+                                    </div>
+                                    <p class="timeline-note">Muncul 3 tangkai bunga baru, kuncup mulai membuka.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-entry">
+                                <div class="timeline-dot fase-Vegetatif"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header"><strong>Anggrek Bulan</strong><span class="timeline-date">1 Juni 2026</span></div>
+                                    <div class="timeline-details">
+                                        <span>📏 Tinggi: 30 cm</span><span>🍃 Daun: 10</span><span>🌿 Fase: Vegetatif</span><span>✅ Kondisi: Sehat</span>
+                                    </div>
+                                    <p class="timeline-note">Pertumbuhan daun baru, media tanam diganti.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-entry">
+                                <div class="timeline-dot fase-Perkecambahan"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header"><strong>Anggrek Bulan</strong><span class="timeline-date">15 Mei 2026</span></div>
+                                    <div class="timeline-details">
+                                        <span>📏 Tinggi: 20 cm</span><span>🍃 Daun: 7</span><span>🌱 Fase: Perkecambahan</span><span>✅ Kondisi: Sehat</span>
+                                    </div>
+                                    <p class="timeline-note">Tanaman baru dipindahkan ke pot yang lebih besar.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW C: TEMUKAN/EXPLORE (Discover) ==================== -->
+        <section id="view-explore" class="view">
+            <div class="page-header-bar">
+                <div class="page-header-inner">
+                    <h2><i class="fas fa-binoculars"></i> Temukan — Jelajahi Keanekaragaman Hayati</h2>
+                    <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>
+                </div>
+            </div>
+            <div class="feature-description">
+                <p><strong>Fitur Pengembangan:</strong> Peta persebaran spesies yang informatif, <em>rekomendasi tumbuhan dominan per daerah</em>, <em>informasi tipe habitat</em>, dan <em>visualisasi tingkat keanekaragaman tumbuhan</em> pada wilayah tertentu.</p>
+            </div>
+            <div class="explore-wrapper">
+                <!-- Filters -->
+                <div class="explore-filters">
+                    <div class="filter-group"><input type="text" id="explore-species" placeholder="Spesies"></div>
+                    <div class="filter-group"><input type="text" id="explore-location" placeholder="Lokasi"></div>
+                    <button class="btn-green-sm" id="btn-explore-search"><i class="fas fa-search"></i> Cari</button>
+                    <button class="btn-outline-sm"><i class="fas fa-filter"></i> Saringan</button>
+                </div>
+
+                <!-- Stats Bar -->
+                <div class="explore-stats">
+                    <div class="explore-stat"><span class="es-num">326.655.687</span><span class="es-label">PENGAMATAN</span></div>
+                    <div class="explore-stat"><span class="es-num">570.234</span><span class="es-label">SPESIES</span></div>
+                    <div class="explore-stat"><span class="es-num">507.949</span><span class="es-label">PENGIDENTIFIKASI</span></div>
+                    <div class="explore-stat"><span class="es-num">3.500.000+</span><span class="es-label">PENGAMAT</span></div>
+                </div>
+
+                <!-- Region Info Cards -->
+                <div class="explore-region-cards">
+                    <div class="region-card">
+                        <h4><i class="fas fa-map-marker-alt"></i> Sumatera</h4>
+                        <div class="region-stats"><span>🌿 12.340 spesies</span><span>🌳 Habitat: Hutan Hujan Tropis</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan:</strong> Rafflesia, Kantong Semar, Meranti, Damar</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span></div>
+                    </div>
+                    <div class="region-card">
+                        <h4><i class="fas fa-map-marker-alt"></i> Jawa</h4>
+                        <div class="region-stats"><span>🌿 8.920 spesies</span><span>🌳 Habitat: Hutan Musim & Pegunungan</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan:</strong> Tectona grandis (Jati), Edelweiss Jawa, Pinus Merkusii</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-medium">Keanekaragaman Sedang</span></div>
+                    </div>
+                    <div class="region-card">
+                        <h4><i class="fas fa-map-marker-alt"></i> Kalimantan</h4>
+                        <div class="region-stats"><span>🌿 15.000+ spesies</span><span>🌳 Habitat: Hutan Hujan Dataran Rendah</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan:</strong> Dipterocarpaceae, Anggrek, Pakis Raksasa</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Sangat Tinggi</span></div>
+                    </div>
+                    <div class="region-card">
+                        <h4><i class="fas fa-map-marker-alt"></i> Papua</h4>
+                        <div class="region-stats"><span>🌿 20.000+ spesies</span><span>🌳 Habitat: Hutan Hujan & Alpin</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan:</strong> Matoa, Sagu, Anggrek Papua, Rhododendron</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Sangat Tinggi</span></div>
+                    </div>
+                </div>
+
+                <!-- View Switcher -->
+                <div class="explore-views">
+                    <button class="view-btn" onclick="switchExploreView('map')"><i class="fas fa-map"></i> Peta</button>
+                    <button class="view-btn active" onclick="switchExploreView('grid')"><i class="fas fa-th"></i> Grid</button>
+                    <button class="view-btn" onclick="switchExploreView('list')"><i class="fas fa-list"></i> Daftar</button>
+                </div>
+
+                <!-- Map View -->
+                <div class="explore-map hidden" id="explore-map-view">
+                    <div class="map-placeholder">
+                        <i class="fas fa-globe-americas"></i>
+                        <p>Peta persebaran spesies interaktif — menampilkan distribusi tumbuhan dan kondisi lingkungan</p>
+                    </div>
+                </div>
+
+                <!-- Grid View -->
+                <div class="explore-grid-container" id="explore-grid-view">
+                    <div class="obs-grid" id="obs-grid">
+                        <!-- Data will be loaded from Supabase dynamically -->
+                        <div style="text-align: center; padding: 40px; grid-column: 1/-1;">Memuat data observasi...</div>
+                    </div>
+                </div>
+
+                <!-- List View -->
+                <div class="explore-list hidden" id="explore-list-view">
+                    <table class="obs-table">
+                        <thead><tr><th>Spesies</th><th>Nama Ilmiah</th><th>Lokasi</th><th>Habitat</th><th>Waktu</th></tr></thead>
+                        <tbody id="obs-list-body">
+                            <!-- Data will be loaded from Supabase dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW D: BERKONTRIBUSI (Contribute) ==================== -->
+        <section id="view-kontribusi" class="view">
+            <div class="page-header-bar">
+                <div class="page-header-inner">
+                    <h2><i class="fas fa-globe-americas"></i> Berkontribusi — Citizen Science Dashboard</h2>
+                    <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>
+                </div>
+            </div>
+            <div class="feature-description">
+                <p><strong>Fitur Pengembangan:</strong> Sistem laporan biodiversitas otomatis, <em>rangkuman jumlah spesies, famili, dan lokasi observasi</em>, serta <em>sistem penghargaan badge dan poin</em> untuk meningkatkan partisipasi citizen science.</p>
+            </div>
+            <div class="kontribusi-wrapper">
+                <!-- User Stats Summary -->
+                <div class="kontrib-stats-row">
+                    <div class="kontrib-stat-card">
+                        <div class="kontrib-stat-icon"><i class="fas fa-camera"></i></div>
+                        <div class="kontrib-stat-num" id="k-obs">12</div>
+                        <div class="kontrib-stat-label">Observasi</div>
+                    </div>
+                    <div class="kontrib-stat-card">
+                        <div class="kontrib-stat-icon"><i class="fas fa-leaf"></i></div>
+                        <div class="kontrib-stat-num" id="k-species">8</div>
+                        <div class="kontrib-stat-label">Spesies Unik</div>
+                    </div>
+                    <div class="kontrib-stat-card">
+                        <div class="kontrib-stat-icon"><i class="fas fa-sitemap"></i></div>
+                        <div class="kontrib-stat-num" id="k-families">5</div>
+                        <div class="kontrib-stat-label">Famili</div>
+                    </div>
+                    <div class="kontrib-stat-card">
+                        <div class="kontrib-stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="kontrib-stat-num" id="k-locations">3</div>
+                        <div class="kontrib-stat-label">Lokasi Berbeda</div>
+                    </div>
+                    <div class="kontrib-stat-card">
+                        <div class="kontrib-stat-icon"><i class="fas fa-check-double"></i></div>
+                        <div class="kontrib-stat-num" id="k-identifikasi">6</div>
+                        <div class="kontrib-stat-label">Identifikasi Dibantu</div>
+                    </div>
+                    <div class="kontrib-stat-card">
+                        <div class="kontrib-stat-icon"><i class="fas fa-star"></i></div>
+                        <div class="kontrib-stat-num" id="k-points">450</div>
+                        <div class="kontrib-stat-label">Poin</div>
+                    </div>
+                </div>
+
+                <div class="kontrib-grid">
+                    <!-- Badge System -->
+                    <div class="kontrib-panel">
+                        <h3><i class="fas fa-trophy"></i> Penghargaan & Badge</h3>
+                        <div class="badge-grid">
+                            <div class="badge-item badge-earned"><div class="badge-icon">🌱</div><div class="badge-name">Pemula</div><div class="badge-desc">Unggah observasi pertama</div></div>
+                            <div class="badge-item badge-earned"><div class="badge-icon">📸</div><div class="badge-name">Fotografer Alam</div><div class="badge-desc">Unggah 10 foto</div></div>
+                            <div class="badge-item badge-earned"><div class="badge-icon">🔍</div><div class="badge-name">Pengidentifikasi</div><div class="badge-desc">Bantu identifikasi 5 spesies</div></div>
+                            <div class="badge-item"><div class="badge-icon">🌿</div><div class="badge-name">Botanis Muda</div><div class="badge-desc">Identifikasi 25 tumbuhan berbeda</div></div>
+                            <div class="badge-item"><div class="badge-icon">🗺️</div><div class="badge-name">Penjelajah</div><div class="badge-desc">Observasi di 5 provinsi berbeda</div></div>
+                            <div class="badge-item"><div class="badge-icon">🏆</div><div class="badge-name">Ahli Ekologi</div><div class="badge-desc">Capai 1000 poin kontribusi</div></div>
+                            <div class="badge-item"><div class="badge-icon">📊</div><div class="badge-name">Research Grade</div><div class="badge-desc">10 observasi mencapai Research Grade</div></div>
+                            <div class="badge-item"><div class="badge-icon">🌍</div><div class="badge-name">Citizen Scientist</div><div class="badge-desc">Data digunakan dalam publikasi</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Biodiversity Report -->
+                    <div class="kontrib-panel">
+                        <h3><i class="fas fa-file-alt"></i> Laporan Biodiversitas Otomatis</h3>
+                        <div class="biodiv-report">
+                            <div class="report-header">
+                                <h4>Laporan Kontribusi Anda</h4>
+                                <span class="report-date">Periode: Juni 2026</span>
+                            </div>
+                            <div class="report-body">
+                                <div class="report-section">
+                                    <h5>Distribusi Observasi per Famili</h5>
+                                    <div class="report-bar"><span class="bar-label">Orchidaceae</span><div class="bar-fill" style="width:70%">4 spesies</div></div>
+                                    <div class="report-bar"><span class="bar-label">Nepenthaceae</span><div class="bar-fill" style="width:35%">2 spesies</div></div>
+                                    <div class="report-bar"><span class="bar-label">Oleaceae</span><div class="bar-fill" style="width:20%">1 spesies</div></div>
+                                    <div class="report-bar"><span class="bar-label">Nelumbonaceae</span><div class="bar-fill" style="width:20%">1 spesies</div></div>
+                                </div>
+                                <div class="report-section">
+                                    <h5>Ringkasan</h5>
+                                    <ul class="report-summary">
+                                        <li>📸 <strong>12</strong> total observasi yang valid</li>
+                                        <li>🌿 <strong>8</strong> spesies unik teridentifikasi</li>
+                                        <li>🗂️ <strong>5</strong> famili tumbuhan berbeda</li>
+                                        <li>📍 Lokasi: <strong>Sumatera, Jawa, Kalimantan</strong></li>
+                                        <li>✅ <strong>6</strong> observasi mencapai Research Grade</li>
+                                        <li>🤝 Anda telah membantu <strong>6</strong> identifikasi pengguna lain</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Identify Section -->
+                <div class="kontrib-panel kontrib-help">
+                    <h3><i class="fas fa-hands-helping"></i> Bantu Identifikasi Pengamatan Lain</h3>
+                    <p class="kontrib-help-desc">Kontribusikan keahlian Anda dengan membantu mengidentifikasi spesies yang diunggah pengguna lain. Setiap identifikasi yang tepat memberikan +10 poin.</p>
+                    <div class="help-cards">
+                        <div class="help-card">
+                            <div class="help-card-img" style="background-image: url('https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=300&q=80')"></div>
+                            <div class="help-card-info"><span class="help-user">oleh user_naturalis</span><span class="help-loc"><i class="fas fa-map-marker-alt"></i> Lampung</span><button class="btn-green btn-sm" onclick="navigateTo('view-identifikasi')">Identifikasi</button></div>
+                        </div>
+                        <div class="help-card">
+                            <div class="help-card-img" style="background-image: url('https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=300&q=80')"></div>
+                            <div class="help-card-info"><span class="help-user">oleh botani_id</span><span class="help-loc"><i class="fas fa-map-marker-alt"></i> Bali</span><button class="btn-green btn-sm" onclick="navigateTo('view-identifikasi')">Identifikasi</button></div>
+                        </div>
+                        <div class="help-card">
+                            <div class="help-card-img" style="background-image: url('https://images.unsplash.com/photo-1457530378978-8bac673b8062?w=300&q=80')"></div>
+                            <div class="help-card-info"><span class="help-user">oleh flora_nusantara</span><span class="help-loc"><i class="fas fa-map-marker-alt"></i> Sulawesi</span><button class="btn-green btn-sm" onclick="navigateTo('view-identifikasi')">Identifikasi</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW E: BELAJAR (Learn) ==================== -->
+        <section id="view-belajar" class="view">
+            <div class="page-header-bar">
+                <div class="page-header-inner">
+                    <h2><i class="fas fa-graduation-cap"></i> Belajar — Ekologi Tumbuhan Interaktif</h2>
+                    <button class="btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>
+                </div>
+            </div>
+            <div class="feature-description">
+                <p><strong>Fitur Pengembangan:</strong> Media pembelajaran interaktif: <em>materi singkat ekologi tumbuhan</em>, <em>kuis evaluasi pemahaman</em>, dan <em>penjelasan peran ekologis spesies</em> (fungsi, adaptasi, kontribusi dalam ekosistem).</p>
+            </div>
+            <div class="belajar-wrapper">
+                <!-- Learning Modules -->
+                <div class="belajar-section">
+                    <h3><i class="fas fa-book-open"></i> Modul Pembelajaran Ekologi Tumbuhan</h3>
+                    <div class="module-grid">
+                        <div class="module-card" onclick="toggleModule('mod1')">
+                            <div class="module-icon">🌱</div>
+                            <h4>Fotosintesis & Produktivitas Primer</h4>
+                            <p>Bagaimana tumbuhan mengubah cahaya matahari menjadi energi dan perannya sebagai produsen dalam rantai makanan.</p>
+                            <span class="module-tag">Ekologi Dasar</span>
+                        </div>
+                        <div class="module-card" onclick="toggleModule('mod2')">
+                            <div class="module-icon">🌿</div>
+                            <h4>Adaptasi Tumbuhan Tropis</h4>
+                            <p>Strategi bertahan hidup tumbuhan Indonesia: daun lebar, akar gantung, epifit, dan simbiosis mikoriza.</p>
+                            <span class="module-tag">Ekologi Tumbuhan</span>
+                        </div>
+                        <div class="module-card" onclick="toggleModule('mod3')">
+                            <div class="module-icon">🌺</div>
+                            <h4>Penyerbukan & Keanekaragaman</h4>
+                            <p>Interaksi tumbuhan-hewan dalam penyerbukan dan bagaimana hal ini menjaga keanekaragaman genetik.</p>
+                            <span class="module-tag">Interaksi Ekologi</span>
+                        </div>
+                        <div class="module-card" onclick="toggleModule('mod4')">
+                            <div class="module-icon">🌳</div>
+                            <h4>Suksesi & Restorasi Ekosistem</h4>
+                            <p>Bagaimana hutan pulih setelah gangguan dan peran tumbuhan perintis dalam restorasi lahan.</p>
+                            <span class="module-tag">Ekologi Komunitas</span>
+                        </div>
+                        <div class="module-card" onclick="toggleModule('mod5')">
+                            <div class="module-icon">🍃</div>
+                            <h4>Jasa Ekosistem Tumbuhan</h4>
+                            <p>Peran tumbuhan: penyerapan karbon, pencegahan erosi, siklus air, dan penyedia oksigen.</p>
+                            <span class="module-tag">Ekologi Lingkungan</span>
+                        </div>
+                        <div class="module-card" onclick="toggleModule('mod6')">
+                            <div class="module-icon">🔬</div>
+                            <h4>Etnobotani Indonesia</h4>
+                            <p>Hubungan antara masyarakat tradisional Indonesia dengan tumbuhan obat, pangan, dan ritual.</p>
+                            <span class="module-tag">Etnobotani</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module Detail (expandable) -->
+                <div class="module-detail hidden" id="module-detail">
+                    <div class="module-detail-inner">
+                        <button class="btn-close-module" onclick="document.getElementById('module-detail').classList.add('hidden')"><i class="fas fa-times"></i></button>
+                        <div id="module-content"></div>
+                    </div>
+                </div>
+
+                <!-- Ecological Roles -->
+                <div class="belajar-section">
+                    <h3><i class="fas fa-tree"></i> Peran Ekologis Spesies yang Diidentifikasi</h3>
+                    <div class="eco-role-cards">
+                        <div class="eco-card">
+                            <div class="eco-species"><strong>Anggrek Bulan</strong> (<em>Phalaenopsis amabilis</em>)</div>
+                            <div class="eco-roles">
+                                <div class="eco-role"><i class="fas fa-bug"></i><strong>Fungsi:</strong> Indikator kesehatan hutan; epifit yang bergantung pada kelembapan tinggi</div>
+                                <div class="eco-role"><i class="fas fa-dna"></i><strong>Adaptasi:</strong> Akar aerial untuk menyerap kelembapan udara; daun tebal untuk menyimpan air</div>
+                                <div class="eco-role"><i class="fas fa-link"></i><strong>Kontribusi:</strong> Menyediakan habitat mikro bagi serangga; indikator kualitas ekosistem hutan</div>
+                            </div>
+                        </div>
+                        <div class="eco-card">
+                            <div class="eco-species"><strong>Rafflesia</strong> (<em>Rafflesia arnoldii</em>)</div>
+                            <div class="eco-roles">
+                                <div class="eco-role"><i class="fas fa-bug"></i><strong>Fungsi:</strong> Parasit holoparasit pada akar liana Tetrastigma; spesies payung konservasi</div>
+                                <div class="eco-role"><i class="fas fa-dna"></i><strong>Adaptasi:</strong> Tidak memiliki daun, batang, atau akar sejati; bergantung penuh pada inang</div>
+                                <div class="eco-role"><i class="fas fa-link"></i><strong>Kontribusi:</strong> Spesies karismatik yang mendorong konservasi hutan hujan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Section -->
+                <div class="belajar-section">
+                    <h3><i class="fas fa-question-circle"></i> Kuis Evaluasi Pemahaman</h3>
+                    <div class="quiz-container" id="quiz-container">
+                        <div class="quiz-progress"><span id="quiz-progress-text">Pertanyaan 1 dari 5</span><div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill" style="width:20%"></div></div></div>
+                        <div class="quiz-question" id="quiz-question">Apa peran utama tumbuhan sebagai produsen dalam ekosistem?</div>
+                        <div class="quiz-options" id="quiz-options">
+                            <button class="quiz-option" onclick="checkQuiz(this, true)">Mengubah energi cahaya menjadi energi kimia melalui fotosintesis</button>
+                            <button class="quiz-option" onclick="checkQuiz(this, false)">Menguraikan bahan organik menjadi anorganik</button>
+                            <button class="quiz-option" onclick="checkQuiz(this, false)">Memangsa organisme yang lebih kecil</button>
+                            <button class="quiz-option" onclick="checkQuiz(this, false)">Menyerap nutrisi dari organisme inang</button>
+                        </div>
+                        <div class="quiz-feedback hidden" id="quiz-feedback"></div>
+                        <button class="btn-green hidden" id="quiz-next" onclick="nextQuiz()">Pertanyaan Berikutnya <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="quiz-score hidden" id="quiz-score"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW: GENERIC / PLACEHOLDER ==================== -->
+        <section id="view-generic" class="view">
+            <div class="page-header-bar">
+                <div class="page-container">
+                    <h2 id="generic-title">Halaman</h2>
+                </div>
+            </div>
+            <div class="page-container" style="min-height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px;">
+                <i class="fas fa-tools" style="font-size: 4rem; color: var(--inat-green); margin-bottom: 20px;"></i>
+                <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Dalam Tahap Pengembangan</h3>
+                <p style="color: var(--inat-text-medium); max-width: 500px; line-height: 1.6; margin-bottom: 24px;">Fitur ini saat ini sedang dalam pengerjaan dan akan segera hadir pada iterasi pembaruan berikutnya. Terima kasih atas kesabaran Anda!</p>
+                <button class="btn-green" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Halaman Sebelumnya
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== SITE FOOTER ===== -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" id="close-modal"><i class="fas fa-times"></i></button>
+            <div class="modal-logo"><span class="logo-i">i</span><span class="logo-text">Naturalist</span></div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login">Masuk</button>
+                <button class="auth-tab" id="tab-register">Daftar</button>
+            </div>
+            <form id="form-login" class="auth-form active" onsubmit="return false;">
+                <div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email" placeholder="nama@email.com" required></div>
+                <div class="form-group"><label for="login-password">Kata Sandi</label><input type="password" id="login-password" placeholder="Masukkan kata sandi" required></div>
+                <button class="btn-green w-full" id="btn-submit-login">Masuk</button>
+                <p id="login-error" class="error-msg"></p>
+            </form>
+            <form id="form-register" class="auth-form" onsubmit="return false;">
+                <div class="form-group"><label for="reg-email">Email</label><input type="email" id="reg-email" placeholder="nama@email.com" required></div>
+                <div class="form-group"><label for="reg-password">Kata Sandi</label><input type="password" id="reg-password" placeholder="Minimal 6 karakter" required></div>
+                <button class="btn-green w-full" id="btn-submit-register">Buat Akun</button>
+                <p id="reg-error" class="error-msg"></p>
+            </form>
+            <div class="auth-divider"><span>ATAU</span></div>
+            <button class="btn-google" id="btn-google-auth">
+                <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Lanjutkan dengan Google
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== COMING SOON MODAL ===== -->
+    <div id="coming-soon-modal" class="modal-overlay">
+        <div class="modal-box modal-small">
+            <button class="modal-close" onclick="closeComingSoon()"><i class="fas fa-times"></i></button>
+            <div class="coming-soon-content">
+                <i class="fas fa-tools coming-soon-icon"></i>
+                <h3 id="coming-soon-title">Fitur Segera Hadir</h3>
+                <p>Fitur ini sedang dalam tahap pengembangan.</p>
+                <button class="btn-green" onclick="closeComingSoon();">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== OBSERVATION DETAIL MODAL ===== -->
+    <div id="obs-detail-modal" class="modal-overlay">
+        <div class="modal-box modal-medium">
+            <button class="modal-close" onclick="closeObsDetail()"><i class="fas fa-times"></i></button>
+            <div id="obs-detail-content"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script src="identify.js"></script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                console.log('Service Worker registered:', reg.scope);
+            }).catch(err => console.log('SW registration failed:', err));
+        }
+    </script>
+</body>
+</html>
