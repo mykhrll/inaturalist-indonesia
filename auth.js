@@ -526,7 +526,30 @@ async function getAllObservations() {
 async function deleteObservation(id) {
     if (!db) return false;
     try {
+        // 1. Ambil dokumen observasi untuk mendapatkan URL gambar (jika ada)
+        const doc = await db.collection('observations').doc(id).get();
+        if (doc.exists) {
+            const data = doc.data();
+            if (data.image_url && supabaseClient) {
+                try {
+                    // Ekstrak nama file/path dari URL publik Supabase
+                    // Biasanya polanya: https://[project-ref].supabase.co/storage/v1/object/public/images/monitoring/lacak_xxx.jpg
+                    const urlParts = data.image_url.split('/public/images/');
+                    if (urlParts.length > 1) {
+                        const filePath = urlParts[1];
+                        // Hapus file dari Supabase Storage
+                        await supabaseClient.storage.from('images').remove([filePath]);
+                        console.log("✅ Berhasil menghapus gambar dari Supabase Storage:", filePath);
+                    }
+                } catch (e) {
+                    console.error("Gagal menghapus gambar di Supabase Storage:", e);
+                }
+            }
+        }
+
+        // 2. Hapus dokumen di Firestore
         await db.collection('observations').doc(id).delete();
+        console.log("✅ Observasi berhasil dihapus dari Firestore.");
         return true;
     } catch (err) {
         console.error("Error deleting observation:", err);
