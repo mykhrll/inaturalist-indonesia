@@ -74,16 +74,18 @@ async function analyzeImageWithGroq(base64Data) {
         throw new Error("API Key Groq belum dikonfigurasi. Silakan isi API key di file config.js");
     }
 
-    // Prompt for plant identification with Indonesian context — enhanced v2
-    const promptText = `Anda adalah seorang ahli botani dan taksonomi yang sangat berpengalaman, khususnya dalam flora di Indonesia dan Asia Tenggara.
+    // Prompt for plant identification with Indonesian context — enhanced v3
+    const promptText = `Anda adalah seorang ahli botani dan taksonomi profesional yang sangat berpengalaman, khususnya mengenai flora di Indonesia dan Asia Tenggara.
 
-Saya memberikan Anda sebuah gambar tumbuhan. Tolong identifikasi tanaman tersebut dengan akurat.
+Tugas Utama Anda: Identifikasi spesies tanaman pada gambar yang diberikan dengan TINGKAT AKURASI TERTINGGI dan SANGAT SPESIFIK. 
+AMAT PENTING: Anda harus menganalisis GAMBAR SAAT INI secara independen. Jangan pernah memberikan hasil yang sama secara membabi buta jika gambarnya berbeda. Fokus pada ciri-ciri visual unik yang ada di dalam gambar ini.
+Sebelum menyimpulkan, lakukan observasi cermat terhadap bentuk daun, pertulangan daun, warna batang, keberadaan bulu halus, struktur bunga/buah (jika ada), dan perawakan (habitus). Jika gambar kurang jelas, tetap usahakan identifikasi hingga tingkat Genus atau Famili dan tuliskan alasannya, tetapi JANGAN MENEBAK ASAL.
 
 Berikan jawaban Anda HANYA dalam format JSON yang valid (tanpa markdown backticks) dengan struktur PERSIS seperti ini:
 {
     "name_id": "Nama Umum Tanaman (Bahasa Indonesia)",
     "scientific_name": "Nama Ilmiah Tanaman (Genus species)",
-    "confidence": "Tinggi/Sedang/Rendah",
+    "confidence": "Sangat Tinggi/Tinggi/Sedang/Rendah",
     "classification": {
         "kingdom": "Plantae",
         "phylum": "...",
@@ -94,18 +96,24 @@ Berikan jawaban Anda HANYA dalam format JSON yang valid (tanpa markdown backtick
         "species": "..."
     },
     "distribution_indonesia": "Jelaskan persebaran tanaman ini di Indonesia secara detail. Sebutkan pulau-pulau atau provinsi mana saja tanaman ini banyak ditemukan. Minimal 3-4 kalimat.",
-    "distribution_world": "Jelaskan persebaran tanaman ini di dunia. Sebutkan benua, negara, atau wilayah biogeografi mana saja. Minimal 2-3 kalimat.",
-    "habitat": "Jelaskan karakteristik habitat alami tanaman ini secara detail: tipe ekosistem, ketinggian, kelembapan, jenis tanah, pencahayaan, dan kondisi lingkungan yang dibutuhkan. Minimal 3-4 kalimat.",
-    "fun_fact": "Berikan satu paragraf (minimal 4-5 kalimat) mengenai pengetahuan unik, manfaat, atau fun fact mengenai tumbuhan tersebut khususnya dalam konteks Indonesia. Bisa meliputi penggunaan tradisional, keunikan biologis, status konservasi, atau peran ekologisnya.",
-    "ecological_role": "Jelaskan peran ekologis tumbuhan ini: fungsinya dalam ekosistem, interaksi dengan organisme lain (polinator, herbivora, simbiosis), dan kontribusinya terhadap lingkungan. Minimal 2-3 kalimat.",
+    "distribution_world": "Jelaskan persebaran biogeografi tanaman ini di dunia. Sebutkan benua dan wilayah negara mana saja. Minimal 2-3 kalimat.",
+    "habitat": "Jelaskan karakteristik habitat alami tanaman ini secara detail: tipe ekosistem, rentang ketinggian mdpl, jenis kelembapan/tanah, pencahayaan, dan kondisi lingkungan yang ideal. Minimal 3-4 kalimat.",
+    "fun_fact": {
+        "fakta_umum": "Fakta umum yang menarik tentang tumbuhan ini.",
+        "nama_lokal_indonesia": "Sebutkan berbagai nama daerah/lokal di Indonesia untuk tumbuhan ini.",
+        "pemanfaatan_masyarakat": "Pemanfaatannya oleh masyarakat lokal Indonesia (misal: obat tradisional, kuliner, bahan bangunan, dll).",
+        "nilai_ekonomi_budaya": "Nilai ekonomi dan budaya (sejarah, mitos, kerajinan) dari tumbuhan ini.",
+        "pemanfaatan_negara_lain": "Perbandingan pemanfaatannya di negara lain jika ada."
+    },
+    "ecological_role": "Jelaskan peran ekologis tumbuhan ini: fungsinya dalam ekosistem, kemampuannya menyerap polutan, interaksi dengan organisme spesifik (polinator, herbivora, mikoriza), dan kontribusinya. Minimal 2-3 kalimat.",
     "related_species": [
         {
             "name": "Nama spesies terkait 1",
-            "scientific_name": "Nama ilmiah"
+            "scientific_name": "Nama ilmiah 1"
         },
         {
             "name": "Nama spesies terkait 2",
-            "scientific_name": "Nama ilmiah"
+            "scientific_name": "Nama ilmiah 2"
         }
     ],
     "references": [
@@ -226,28 +234,28 @@ Berikan jawaban Anda HANYA dalam format JSON yang valid (tanpa markdown backtick
 
         displayResults(parsedData);
 
-        // Save to Supabase if logged in
+        // Save to Database (Firestore) if logged in
         if (typeof saveObservation === 'function') {
-            // Create a small thumbnail for DB storage
-            let thumbnail = null;
-            try {
-                const canvas = document.createElement('canvas');
-                const img = document.getElementById('image-preview');
-                const maxW = 200;
-                const ratio = maxW / img.naturalWidth;
-                canvas.width = maxW;
-                canvas.height = img.naturalHeight * ratio;
-                const ctx2 = canvas.getContext('2d');
-                ctx2.drawImage(img, 0, 0, canvas.width, canvas.height);
-                thumbnail = canvas.toDataURL('image/jpeg', 0.5);
-            } catch (thumbErr) {
-                console.warn('Thumbnail creation failed:', thumbErr);
+            btnAnalyze.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+            btnAnalyze.disabled = true;
+
+            let imageUrl = null;
+            if (imageInput.files && imageInput.files[0]) {
+                const file = imageInput.files[0];
+                if (typeof uploadMonitoringImageToSupabase === 'function') {
+                    btnAnalyze.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengunggah Foto...';
+                    imageUrl = await uploadMonitoringImageToSupabase(file);
+                }
             }
-            parsedData.image_thumbnail = thumbnail;
+
+            parsedData.image_url = imageUrl;
+            
             saveObservation(parsedData).then(saved => {
                 if (saved && typeof showToast === 'function') {
                     showToast('Observasi berhasil disimpan ke database!');
                 }
+                btnAnalyze.innerHTML = '<i class="fas fa-search"></i> Analisis Sekarang';
+                btnAnalyze.disabled = false;
             });
         }
     } catch (e) {
@@ -287,11 +295,11 @@ function displayResults(data) {
             <div class="result-section">
                 <h4><i class="fas fa-seedling"></i> Spesies Terkait</h4>
                 <div class="taxonomy-grid">
-                    ${data.related_species.map(sp => `
-                        <div class="taxonomy-item">
+                    ${data.related_species.slice(0, 2).map(sp => `
+                        <a href="https://www.google.com/search?q=${encodeURIComponent(sp.scientific_name)}" target="_blank" class="taxonomy-item" style="display:block; text-decoration:none; color:inherit; cursor:pointer;" onmouseover="this.style.background='#eef6ed'" onmouseout="this.style.background='#f8fafc'" title="Cari di Google">
                             <strong>${sp.name}</strong><br>
-                            <em style="font-size: 0.82rem; color: #666;">${sp.scientific_name}</em>
-                        </div>
+                            <em style="font-size: 0.82rem; color: var(--inat-green);">${sp.scientific_name}</em> <i class="fas fa-external-link-alt" style="font-size: 0.7rem; margin-left: 4px; color: #999;"></i>
+                        </a>
                     `).join('')}
                 </div>
             </div>
@@ -342,41 +350,54 @@ function displayResults(data) {
     const confBadge = data.confidence ? 
         `<span style="display:inline-block; padding:3px 10px; border-radius:20px; background:${confColor}; color:white; font-size:0.75rem; font-weight:600; margin-left:10px;">Keyakinan: ${data.confidence}</span>` : '';
 
+    let funFactHtml = '';
+    if (typeof data.fun_fact === 'object' && data.fun_fact !== null) {
+        funFactHtml = `
+            <p style="text-align: justify; margin-bottom: 8px;"><strong>Fakta Umum:</strong> ${data.fun_fact.fakta_umum || '-'}</p>
+            <p style="text-align: justify; margin-bottom: 8px;"><strong>Nama Lokal (Indonesia):</strong> ${data.fun_fact.nama_lokal_indonesia || '-'}</p>
+            <p style="text-align: justify; margin-bottom: 8px;"><strong>Pemanfaatan Masyarakat:</strong> ${data.fun_fact.pemanfaatan_masyarakat || '-'}</p>
+            <p style="text-align: justify; margin-bottom: 8px;"><strong>Nilai Ekonomi & Budaya:</strong> ${data.fun_fact.nilai_ekonomi_budaya || '-'}</p>
+            <p style="text-align: justify;"><strong>Pemanfaatan di Negara Lain:</strong> ${data.fun_fact.pemanfaatan_negara_lain || '-'}</p>
+        `;
+    } else {
+        funFactHtml = `<p style="text-align: justify;">${data.fun_fact || 'Informasi fun fact tidak tersedia.'}</p>`;
+    }
+
     resultContent.innerHTML = `
         <div class="result-card">
             <div class="result-header">
-                <h3>${data.name_id || 'Tidak diketahui'} ${confBadge}</h3>
-                <span class="sciname">${data.scientific_name || ''}</span>
+                <h3>${data.name_id || 'Spesies Tidak Dikenal'} ${confBadge}</h3>
+                <span class="sciname">${data.scientific_name || 'Scientific name unknown'}</span>
             </div>
+            
             <div class="result-body">
-                
                 <div class="result-section">
                     <h4><i class="fas fa-sitemap"></i> Klasifikasi Taksonomi</h4>
                     <div class="taxonomy-grid">
                         ${taxonomyHtml}
                     </div>
                 </div>
-
+                
                 <div class="result-section">
-                    <h4><i class="fas fa-map-marked-alt"></i> Persebaran di Indonesia</h4>
-                    <p style="text-align: justify;">${data.distribution_indonesia || 'Data persebaran tidak tersedia.'}</p>
+                    <h4><i class="fas fa-map-marker-alt"></i> Persebaran di Indonesia</h4>
+                    <p style="text-align: justify;">${data.distribution_indonesia || 'Informasi persebaran di Indonesia tidak tersedia.'}</p>
                 </div>
 
                 <div class="result-section">
                     <h4><i class="fas fa-globe-americas"></i> Persebaran di Dunia</h4>
-                    <p style="text-align: justify;">${data.distribution_world || 'Data persebaran global tidak tersedia.'}</p>
+                    <p style="text-align: justify;">${data.distribution_world || 'Informasi persebaran dunia tidak tersedia.'}</p>
                 </div>
 
                 <div class="result-section">
-                    <h4><i class="fas fa-mountain"></i> Karakteristik Habitat</h4>
+                    <h4><i class="fas fa-mountain"></i> Habitat Alami</h4>
                     <p style="text-align: justify;">${data.habitat || 'Informasi habitat tidak tersedia.'}</p>
                 </div>
 
                 <div class="result-section">
-                    <h4><i class="fas fa-lightbulb"></i> Fun Fact / Pengetahuan Unik</h4>
-                    <p style="text-align: justify;">${data.fun_fact || 'Tidak ada informasi tambahan.'}</p>
+                    <h4><i class="fas fa-lightbulb"></i> Fun Fact & Pemanfaatan</h4>
+                    ${funFactHtml}
                 </div>
-
+                
                 <div class="result-section">
                     <h4><i class="fas fa-leaf"></i> Peran Ekologis</h4>
                     <p style="text-align: justify;">${data.ecological_role || 'Informasi peran ekologis tidak tersedia.'}</p>
@@ -388,7 +409,6 @@ function displayResults(data) {
                     <h4><i class="fas fa-book-open"></i> Referensi Jurnal (Open Access)</h4>
                     ${refsHtml}
                 </div>
-
             </div>
         </div>
     `;

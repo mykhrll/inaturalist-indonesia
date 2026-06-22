@@ -1,178 +1,127 @@
-// auth.js — v4 (with Supabase DB integration)
+// auth.js — v5 (Hybrid: Firebase Auth & Monitoring + Supabase Observations)
 
 let supabaseClient = null;
-
-// Hybrid Storage (Cookie + LocalStorage) for Session Persistence
-const cookieStorage = {
-    getItem: (key) => {
-        let val = window.localStorage.getItem(key);
-        if (val) return val;
-        const match = document.cookie.match(new RegExp('(^| )' + key + '=([^;]+)'));
-        if (match) {
-            val = decodeURIComponent(match[2]);
-            window.localStorage.setItem(key, val);
-            return val;
-        }
-        return null;
-    },
-    setItem: (key, value) => {
-        window.localStorage.setItem(key, value);
-        const d = new Date();
-        d.setTime(d.getTime() + (7*24*60*60*1000));
-        document.cookie = key + "=" + encodeURIComponent(value) + ";expires=" + d.toUTCString() + ";path=/";
-    },
-    removeItem: (key) => {
-        window.localStorage.removeItem(key);
-        document.cookie = key + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
-    }
-};
+let firebaseApp = null;
+let db = null; // Firestore reference
 
 // Initialize Supabase
 try {
-    if (CONFIG.SUPABASE_URL && 
-        !CONFIG.SUPABASE_URL.includes("GANTI_DENGAN") &&
-        CONFIG.SUPABASE_ANON_KEY && 
-        !CONFIG.SUPABASE_ANON_KEY.includes("GANTI_DENGAN")) {
-        
-        supabaseClient = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
-            auth: {
-                persistSession: true,
-                autoRefreshToken: true,
-                detectSessionInUrl: true,
-                storage: cookieStorage
-            }
-        });
-        console.log("✅ Supabase berhasil diinisialisasi.");
-        checkUserSession();
-    } else {
-        console.warn("⚠️ Supabase belum dikonfigurasi.");
+    if (CONFIG.SUPABASE_URL && !CONFIG.SUPABASE_URL.includes("GANTI_DENGAN")) {
+        // Hanya inisialisasi minimal tanpa persistensi sesi lokal karena Auth ditangani Firebase
+        supabaseClient = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+        console.log("✅ Supabase berhasil diinisialisasi (untuk Observations).");
     }
 } catch (error) {
     console.error("❌ Error inisialisasi Supabase:", error);
 }
 
-async function checkUserSession() {
-    // Cek manual mock session
-    const mockUserStr = localStorage.getItem('inat_mock_user');
-    const now = new Date().getTime();
-    const sevenDays = 7 * 24 * 60 * 60 * 1000;
-    const lastActive = localStorage.getItem('inat_last_active');
-
-    if (mockUserStr) {
-        if (lastActive && (now - parseInt(lastActive)) > sevenDays) {
-            console.log("Sesi kadaluarsa (7 hari tidak aktif). Logout otomatis.");
-            localStorage.removeItem('inat_mock_user');
-            localStorage.removeItem('inat_last_active');
-            onLogout();
-        } else {
-            localStorage.setItem('inat_last_active', now.toString());
-            const mockUser = JSON.parse(mockUserStr);
-            onLogin(mockUser);
-        }
-        return; // Supabase not needed if mock is active
-    }
-
-    if (!supabaseClient) return;
-    
-    // Ambil session saat ini secara eksplisit untuk mencegah status null sementara saat refresh
-    supabaseClient.auth.getSession().then(({ data: { session } }) => {
-        const now = new Date().getTime();
-        const lastActive = localStorage.getItem('inat_last_active');
+// Initialize Firebase
+try {
+    if (CONFIG.FIREBASE_CONFIG && !CONFIG.FIREBASE_CONFIG.apiKey.includes("GANTI_DENGAN")) {
+        firebaseApp = firebase.initializeApp(CONFIG.FIREBASE_CONFIG);
+        db = firebase.firestore();
+        console.log("✅ Firebase berhasil diinisialisasi.");
         
-        if (session) {
-            // Bersihkan hash jika ada (karena Google login melempar token di URL)
-            if (window.location.hash && window.location.hash.includes('access_token')) {
-                window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
-            }
-
-            if (lastActive && (now - parseInt(lastActive)) > sevenDays) {
-                console.log("Sesi kadaluarsa (7 hari tidak aktif). Logout otomatis.");
-                supabaseClient.auth.signOut();
-                onLogout();
+        // Setup Firebase Auth State Listener
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // Konversi data Firebase User agar mirip dengan struktur sebelumnya
+                const formattedUser = {
+                    email: user.email,
+                    id: user.uid, // Ini Firebase UID, kita gunakan sebagai referensi utama
+                    phoneNumber: user.phoneNumber,
+                    isAnonymous: user.isAnonymous,
+                    user_metadata: {
+                        full_name: user.displayName,
+                        avatar_url: user.photoURL
+                    }
+                };
+                onLogin(formattedUser);
             } else {
-                localStorage.setItem('inat_last_active', now.toString());
-                onLogin(session.user);
+                onLogout();
             }
-        } else {
-            localStorage.removeItem('inat_last_active');
-            onLogout();
-        }
-    }).catch(err => console.error("Session error:", err));
-
-    // Dengarkan perubahan sesi di masa depan (misal: ada tab lain yang logout)
-    supabaseClient.auth.onAuthStateChange((_event, session) => {
-        if (_event === 'INITIAL_SESSION') return; // Sudah ditangani oleh getSession() di atas
-        
-        if (session) {
-            if (window.location.hash && window.location.hash.includes('access_token')) {
-                window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
-            }
-            localStorage.setItem('inat_last_active', new Date().getTime().toString());
-            onLogin(session.user);
-        } else {
-            localStorage.removeItem('inat_last_active');
-            onLogout();
-        }
-    });
+        });
+    } else {
+        console.warn("⚠️ Firebase belum dikonfigurasi.");
+    }
+} catch (error) {
+    console.error("❌ Error inisialisasi Firebase:", error);
 }
 
-// Register
+// Register (Email/Password via Firebase)
 document.getElementById('btn-submit-register').addEventListener('click', async () => {
-    if (!supabaseClient) { alert("Supabase belum dikonfigurasi."); return; }
-    const email = document.getElementById('reg-email').value;
-    const password = document.getElementById('reg-password').value;
-    const err = document.getElementById('reg-error');
+    if (!firebaseApp) { alert("Firebase belum dikonfigurasi."); return; }
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    const err = document.getElementById('auth-error');
     err.textContent = "";
     if (!email || !password) { err.textContent = "Email dan password harus diisi."; return; }
     if (password.length < 6) { err.textContent = "Password minimal 6 karakter."; return; }
     
-    const { data, error } = await supabaseClient.auth.signUp({ email, password });
-    if (error) { err.textContent = error.message; }
-    else { alert("Pendaftaran berhasil! Cek email untuk verifikasi."); document.getElementById('auth-modal').classList.remove('active'); }
+    try {
+        await firebase.auth().createUserWithEmailAndPassword(email, password);
+        alert("Pendaftaran berhasil!");
+        document.getElementById('auth-modal').classList.remove('active');
+    } catch (error) {
+        err.textContent = error.message;
+    }
 });
 
-// Login
+// Login (Email/Password via Firebase)
 document.getElementById('btn-submit-login').addEventListener('click', async () => {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const err = document.getElementById('login-error');
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    const err = document.getElementById('auth-error');
     err.textContent = "";
     if (!email || !password) { err.textContent = "Email dan password harus diisi."; return; }
     
     // Hardcoded bypass for the user's account request
     if (email === 'mykhrll' && password === 'Khoirul710.') {
         const mockUser = { id: 'mock-123', email: 'mykhrll', user_metadata: { full_name: 'mykhrll' } };
-        localStorage.setItem('inat_mock_user', JSON.stringify(mockUser));
-        localStorage.setItem('inat_last_active', new Date().getTime().toString());
         document.getElementById('auth-modal').classList.remove('active');
         onLogin(mockUser);
         return;
     }
 
-    if (!supabaseClient) { alert("Supabase belum dikonfigurasi."); return; }
+    if (!firebaseApp) { alert("Firebase belum dikonfigurasi."); return; }
     
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) { err.textContent = error.message; }
-    else { document.getElementById('auth-modal').classList.remove('active'); }
+    try {
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+        document.getElementById('auth-modal').classList.remove('active');
+    } catch (error) {
+        err.textContent = error.message;
+    }
 });
 
-// Google Login
+// Google Login (via Firebase)
 document.getElementById('btn-google-auth').addEventListener('click', async () => {
-    if (!supabaseClient) { alert("Supabase belum dikonfigurasi."); return; }
+    if (!firebaseApp) { alert("Firebase belum dikonfigurasi."); return; }
     
-    const { data, error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            queryParams: {
-                prompt: 'select_account'
-            }
-        }
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({
+        prompt: 'select_account'
     });
     
-    if (error) {
+    try {
+        await firebase.auth().signInWithPopup(provider);
+        document.getElementById('auth-modal').classList.remove('active');
+    } catch (error) {
         alert("Error login Google: " + error.message);
     }
 });
+
+// Anonymous Login (via Firebase)
+document.getElementById('btn-anon-auth')?.addEventListener('click', async () => {
+    if (!firebaseApp) { alert("Firebase belum dikonfigurasi."); return; }
+    try {
+        await firebase.auth().signInAnonymously();
+        document.getElementById('auth-modal').classList.remove('active');
+    } catch (error) {
+        alert("Error login Tamu: " + error.message);
+    }
+});
+
+
 
 // On Login — set up UI (guarded against duplicate listeners)
 let profileListenersAttached = false;
@@ -180,7 +129,13 @@ let profileListenersAttached = false;
 function onLogin(user) {
     const meta = user.user_metadata || {};
     const avatarUrl = meta.avatar_url || meta.picture || null;
-    const fullName = meta.full_name || meta.name || user.email.split('@')[0];
+    
+    let fallbackName = "Pengguna";
+    if (user.email) fallbackName = user.email.split('@')[0];
+    else if (user.phoneNumber) fallbackName = user.phoneNumber;
+    else if (user.isAnonymous) fallbackName = "Tamu";
+    
+    const fullName = meta.full_name || meta.name || fallbackName;
     const initials = fullName.charAt(0).toUpperCase();
     
     // Update avatar in logged-in navbar
@@ -201,8 +156,8 @@ function onLogin(user) {
         document.getElementById('btn-logout').addEventListener('click', async () => {
             localStorage.removeItem('inat_mock_user');
             localStorage.removeItem('inat_last_active');
-            if (supabaseClient) {
-                await supabaseClient.auth.signOut();
+            if (firebaseApp) {
+                await firebase.auth().signOut();
             }
             onLogout();
         });
@@ -224,9 +179,9 @@ function onLogout() {
     switchToLoggedOutUI();
     
     // Cleanup realtime subscriptions
-    if (window.monitoringChannel && supabaseClient) {
-        supabaseClient.removeChannel(window.monitoringChannel);
-        window.monitoringChannel = null;
+    if (typeof window.monitoringChannelFirebase === 'function') {
+        window.monitoringChannelFirebase(); // Unsubscribe Firestore
+        window.monitoringChannelFirebase = null;
     }
     if (window.helpIdentifyChannel && supabaseClient) {
         supabaseClient.removeChannel(window.helpIdentifyChannel);
@@ -256,33 +211,36 @@ function resetDashboardStats() {
         if (el) el.classList.remove('badge-earned');
     });
 
-    // Reset Laporan Biodiversitas
+    // Reset Laporan Biodiversitas & Peran Ekologis
     if (typeof renderBiodiversityReport === 'function') {
         renderBiodiversityReport([], 0, 0); // Will trigger empty state
+    }
+    if (typeof renderEcoRoles === 'function') {
+        renderEcoRoles([]);
     }
 }
 
 // ===== DATABASE HELPERS =====
 
-// Get current user ID
+// Get current user ID (Firebase)
 function getCurrentUserId() {
-    if (!supabaseClient) return null;
-    // supabaseClient.auth.getUser() is async, use session instead
-    return supabaseClient.auth.getSession().then(({ data }) => data.session?.user?.id || null);
+    if (!firebaseApp) return null;
+    const user = firebase.auth().currentUser;
+    return user ? user.uid : null;
 }
 
 // Save an observation (from Identifikasi feature)
 async function saveObservation(obsData) {
-    if (!supabaseClient) { console.warn("Supabase not initialized"); return null; }
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) { console.warn("Not logged in"); return null; }
+    if (!db) { console.warn("Firebase db not initialized"); return null; }
     
-    let uName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || '';
-    if (!uName && session.user.email) uName = session.user.email.split('@')[0];
-    if (!uName) uName = 'Pengguna';
+    // Gunakan Firebase User sebagai sumber identitas
+    const user = firebase.auth().currentUser;
+    if (!user) { console.warn("Not logged in to Firebase"); return null; }
+    
+    let uName = user.displayName || user.email.split('@')[0] || 'Pengguna';
 
     const row = {
-        user_id: session.user.id,
+        user_id: user.uid,
         user_name: uName,
         species_name: obsData.name_id || '',
         scientific_name: obsData.scientific_name || '',
@@ -295,52 +253,78 @@ async function saveObservation(obsData) {
         references: obsData.references || [],
         related_species: obsData.related_species || [],
         confidence: obsData.confidence || '',
-        image_base64: obsData.image_thumbnail || null,
-        created_at: new Date().toISOString()
+        image_url: obsData.image_url || null,
+        created_at: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    const { data, error } = await supabaseClient
-        .from('observations')
-        .insert([row])
-        .select();
-
-    if (error) {
+    try {
+        const docRef = await db.collection('observations').add(row);
+        console.log("✅ Observation saved to Firestore");
+        return { id: docRef.id, ...row };
+    } catch (error) {
         console.error("Error saving observation:", error);
         return null;
     }
-    console.log("✅ Observation saved:", data);
-    return data;
 }
 
-// Save a monitoring/lacak entry
-async function saveLacakEntry(entry) {
+// Upload image to Supabase Storage
+async function uploadMonitoringImageToSupabase(file) {
     if (!supabaseClient) return null;
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) return null;
+    
+    // Generate unique file name
+    const fileExt = file.name.split('.').pop();
+    const fileName = `lacak_${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+    const filePath = `monitoring/${fileName}`;
+
+    try {
+        const { data, error } = await supabaseClient.storage
+            .from('images') // Pastikan bucket 'images' ada di Supabase
+            .upload(filePath, file);
+
+        if (error) {
+            console.error("Supabase Storage Error:", error);
+            return null;
+        }
+
+        const { data: publicData } = supabaseClient.storage
+            .from('images')
+            .getPublicUrl(filePath);
+
+        return publicData.publicUrl;
+    } catch (err) {
+        console.error("Supabase Upload Error:", err);
+        return null;
+    }
+}
+
+// Save a monitoring/lacak entry -> Pindah ke Firebase Firestore
+async function saveLacakEntry(entry) {
+    if (!firebaseApp || !db) return null;
+    const user = firebase.auth().currentUser;
+    if (!user) return null;
 
     const row = {
-        user_id: session.user.id,
+        user_id: user.uid,
         plant_name: entry.nama,
         observation_date: entry.tanggal,
-        height_cm: entry.tinggi || 0,
+        height: entry.tinggi || 0,
+        height_unit: entry.satuan || 'cm',
         leaf_count: entry.daun || 0,
         growth_phase: entry.fase,
         health_condition: entry.kondisi,
         notes: entry.catatan || '',
-        created_at: new Date().toISOString()
+        image_url: entry.image_url || null,
+        created_at: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    const { data, error } = await supabaseClient
-        .from('monitoring')
-        .insert([row])
-        .select();
-
-    if (error) {
-        console.error("Error saving monitoring entry:", error);
+    try {
+        const docRef = await db.collection('monitoring').add(row);
+        console.log("✅ Monitoring entry saved to Firestore with ID:", docRef.id);
+        return { id: docRef.id, ...row };
+    } catch (error) {
+        console.error("Error saving monitoring entry to Firestore:", error);
         return null;
     }
-    console.log("✅ Monitoring entry saved:", data);
-    return data;
 }
 
 // Load all user data (observations + monitoring)
@@ -348,105 +332,124 @@ async function loadUserData(userId) {
     if (!supabaseClient || !userId) return;
 
     try {
-        // 1. Ambil semua observasi milik user (satu kueri efisien)
-        const { data: obsData, error: obsError } = await supabaseClient
-            .from('observations')
-            .select('*')
-            .eq('user_id', userId)
-            .order('created_at', { ascending: false });
+        // 1. Ambil semua observasi milik user dari Firestore & update dashboard
+        if (firebaseApp && db && !window.userObsChannelFirebase) {
+            window.userObsChannelFirebase = db.collection('observations')
+                .where('user_id', '==', userId)
+                .onSnapshot((snapshot) => {
+                    const obsData = [];
+                    snapshot.forEach(doc => obsData.push({ id: doc.id, ...doc.data() }));
+                    
+                    // Urutkan terbaru di atas
+                    obsData.sort((a, b) => {
+                        const dA = a.created_at ? a.created_at.toMillis() : 0;
+                        const dB = b.created_at ? b.created_at.toMillis() : 0;
+                        return dB - dA;
+                    });
 
-        if (!obsError && obsData) {
-            // Update top stats
-            const obsCount = obsData.length;
-            const elObs = document.getElementById('k-obs');
-            if (elObs) elObs.textContent = obsCount;
+                    // Update top stats
+                    const obsCount = obsData.length;
+                    const elObs = document.getElementById('k-obs');
+                    if (elObs) elObs.textContent = obsCount;
 
-            const uniqueSpecies = new Set(obsData.map(o => o.scientific_name).filter(Boolean)).size;
-            const elSpecies = document.getElementById('k-species');
-            if (elSpecies) elSpecies.textContent = uniqueSpecies;
+                    const uniqueSpecies = new Set(obsData.map(o => o.scientific_name).filter(Boolean)).size;
+                    const elSpecies = document.getElementById('k-species');
+                    if (elSpecies) elSpecies.textContent = uniqueSpecies;
 
-            const families = new Set(obsData.map(o => {
-                try { return o.classification?.family || ''; } catch(e) { return ''; }
-            }).filter(Boolean));
-            const elFam = document.getElementById('k-families');
-            if (elFam) elFam.textContent = families.size;
+                    const families = new Set(obsData.map(o => {
+                        try { return o.classification?.family || ''; } catch(e) { return ''; }
+                    }).filter(Boolean));
+                    const elFam = document.getElementById('k-families');
+                    if (elFam) elFam.textContent = families.size;
 
-            // Lokasi Berbeda
-            const locations = new Set(
-                obsData.map(o => o.distribution_indonesia).filter(Boolean)
-                    .flatMap(loc => loc.split(',').map(s => s.trim()))
-            );
-            const elLoc = document.getElementById('k-locations');
-            if (elLoc) elLoc.textContent = locations.size;
+                    // Lokasi Berbeda
+                    const locations = new Set(
+                        obsData.map(o => o.distribution_indonesia).filter(Boolean)
+                            .flatMap(loc => loc.split(',').map(s => s.trim()))
+                    );
+                    const elLoc = document.getElementById('k-locations');
+                    if (elLoc) elLoc.textContent = locations.size;
 
-            // Identifikasi Dibantu (set 0 for now)
-            const identifikasiDibantu = 0;
-            const elIdent = document.getElementById('k-identifikasi');
-            if (elIdent) elIdent.textContent = identifikasiDibantu;
+                    // Identifikasi Dibantu (set 0 for now)
+                    const identifikasiDibantu = 0;
+                    const elIdent = document.getElementById('k-identifikasi');
+                    if (elIdent) elIdent.textContent = identifikasiDibantu;
 
-            // Kalkulasi Poin (10 poin per observasi, 5 poin per spesies unik)
-            const totalPoin = (obsCount * 10) + (uniqueSpecies * 5);
-            const elPoin = document.getElementById('k-points');
-            if (elPoin) elPoin.textContent = totalPoin;
+                    // Kalkulasi Poin Dasar (10 poin per observasi, 5 poin per spesies unik)
+                    let totalPoin = (obsCount * 10) + (uniqueSpecies * 5);
+                    
+                    // Ambil Poin dari Kuis (Firestore)
+                    db.collection('quiz_scores')
+                        .where('user_id', '==', userId)
+                        .get()
+                        .then((quizSnap) => {
+                            let quizPoints = 0;
+                            quizSnap.forEach(doc => {
+                                const d = doc.data();
+                                if (d.earned_points) quizPoints += d.earned_points;
+                            });
+                            
+                            totalPoin += quizPoints;
+                            
+                            const elPoin = document.getElementById('k-points');
+                            if (elPoin) elPoin.textContent = totalPoin;
 
-            // Hitung Badge
-            const badges = {
-                'badge-pemula': obsCount >= 1,
-                'badge-fotografer': obsCount >= 10,
-                'badge-pengidentifikasi': identifikasiDibantu >= 5,
-                'badge-botanis': uniqueSpecies >= 25,
-                'badge-penjelajah': locations.size >= 5,
-                'badge-ekologi': totalPoin >= 1000,
-                // Dua badge di bawah kita buat default false karena butuh validasi manual / research grade
-                'badge-research': false,
-                'badge-citizen': false 
-            };
+                            // Hitung Badge setelah totalPoin final
+                            const badges = {
+                                'badge-pemula': obsCount >= 1,
+                                'badge-fotografer': obsCount >= 10,
+                                'badge-pengidentifikasi': identifikasiDibantu >= 5,
+                                'badge-botanis': uniqueSpecies >= 25,
+                                'badge-penjelajah': locations.size >= 5,
+                                'badge-ekologi': totalPoin >= 1000,
+                                'badge-research': false,
+                                'badge-citizen': false 
+                            };
 
-            // Terapkan class badge-earned
-            Object.keys(badges).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    if (badges[id]) el.classList.add('badge-earned');
-                    else el.classList.remove('badge-earned');
-                }
-            });
+                            Object.keys(badges).forEach(id => {
+                                const el = document.getElementById(id);
+                                if (el) {
+                                    if (badges[id]) el.classList.add('badge-earned');
+                                    else el.classList.remove('badge-earned');
+                                }
+                            });
+                        })
+                        .catch(err => {
+                            console.error("Error fetching quiz points:", err);
+                            // Fallback if error
+                            const elPoin = document.getElementById('k-points');
+                            if (elPoin) elPoin.textContent = totalPoin;
+                        });
 
-            // Trigger Laporan Biodiversitas di app.js
-            if (typeof renderBiodiversityReport === 'function') {
-                renderBiodiversityReport(obsData, uniqueSpecies, families.size);
-            }
+                    // Trigger Laporan Biodiversitas & Peran Ekologis di app.js
+                    if (typeof renderBiodiversityReport === 'function') {
+                        renderBiodiversityReport(obsData, uniqueSpecies, families.size);
+                    }
+                    if (typeof renderEcoRoles === 'function') {
+                        renderEcoRoles(obsData);
+                    }
+                });
         }
 
-        // 2. Ambil data monitoring (Lacak)
-        const { data: monitoringData } = await supabaseClient
-            .from('monitoring')
-            .select('*')
-            .eq('user_id', userId)
-            .order('observation_date', { ascending: true });
-
-        // Update UI Lacak
-        if (typeof updateLacakFromDB === 'function') {
-            updateLacakFromDB(monitoringData || []);
-        }
-
-        // 3. Setup Realtime Subscription untuk monitoring (jika belum)
-        if (!window.monitoringChannel) {
-            window.monitoringChannel = supabaseClient.channel('custom-monitoring-channel')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'monitoring', filter: `user_id=eq.${userId}` }, (payload) => {
-                    console.log('Realtime monitoring change:', payload);
-                    loadUserData(userId);
-                })
-                .subscribe();
-        }
-
-        // 4. Setup Realtime Subscription untuk observations user ini (jika belum)
-        if (!window.userObsChannel) {
-            window.userObsChannel = supabaseClient.channel('custom-user-obs-channel')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'observations', filter: `user_id=eq.${userId}` }, (payload) => {
-                    console.log('Realtime observations change:', payload);
-                    loadUserData(userId);
-                })
-                .subscribe();
+        // 2 & 3. Ambil data monitoring (Lacak) dari Firestore dengan Realtime Listener
+        if (firebaseApp && db && !window.monitoringChannelFirebase) {
+            window.monitoringChannelFirebase = db.collection('monitoring')
+                .where('user_id', '==', userId)
+                .onSnapshot((snapshot) => {
+                    const monitoringData = [];
+                    snapshot.forEach(doc => {
+                        monitoringData.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    monitoringData.sort((a, b) => new Date(a.observation_date) - new Date(b.observation_date));
+                    
+                    if (typeof updateLacakFromDB === 'function') {
+                        updateLacakFromDB(monitoringData);
+                    }
+                    console.log('Realtime Firebase monitoring data updated.');
+                }, (error) => {
+                    console.error("Error fetching monitoring data:", error);
+                });
         }
 
         console.log("✅ User data loaded.");
@@ -459,75 +462,60 @@ async function loadUserData(userId) {
     }
 }
 
-// ===== Bantu Identifikasi (Realtime) =====
+// ===== Bantu Identifikasi (Realtime via Firebase) =====
 async function loadHelpIdentifyData(currentUserId) {
-    if (!supabaseClient) return;
+    if (!db) return;
 
     try {
-        // Fetch all recent observations
-        const { data, error } = await supabaseClient
-            .from('observations')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(20); // Ambil 20 terbaru, di app.js akan disaring
-            
-        if (error) throw error;
-        
-        if (typeof renderHelpIdentifyCards === 'function') {
-            renderHelpIdentifyCards(data || [], currentUserId);
-        }
-
-        // Setup Realtime Subscription jika belum ada
-        if (!window.helpIdentifyChannel) {
-            window.helpIdentifyChannel = supabaseClient.channel('custom-help-identify-channel')
-                .on(
-                    'postgres_changes',
-                    { event: 'INSERT', schema: 'public', table: 'observations' },
-                    (payload) => {
-                        console.log('Realtime change received for help identify:', payload);
-                        // Refresh data
-                        loadHelpIdentifyData(currentUserId);
+        if (!window.helpIdentifyChannelFirebase) {
+            window.helpIdentifyChannelFirebase = db.collection('observations')
+                .orderBy('created_at', 'desc')
+                .limit(20)
+                .onSnapshot((snap) => {
+                    const data = [];
+                    snap.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+                    if (typeof renderHelpIdentifyCards === 'function') {
+                        renderHelpIdentifyCards(data, currentUserId);
                     }
-                )
-                .subscribe();
+                });
         }
-
     } catch (err) {
         console.error("Error loading help identify data:", err);
     }
 }
 
 // Save quiz score
-async function saveQuizScore(score, total) {
-    if (!supabaseClient) return;
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) return;
+async function saveQuizScore(score, total, earnedPoints = 0, modId = 'general') {
+    if (!db) return;
+    const user = firebase.auth().currentUser;
+    if (!user) return;
 
-    const { error } = await supabaseClient
-        .from('quiz_scores')
-        .insert([{
-            user_id: session.user.id,
+    try {
+        await db.collection('quiz_scores').add({
+            user_id: user.uid,
+            module_id: modId,
             score: score,
             total_questions: total,
-            quiz_type: 'ekologi_tumbuhan',
-            created_at: new Date().toISOString()
-        }]);
-
-    if (error) console.error("Error saving quiz score:", error);
-    else console.log("✅ Quiz score saved.");
+            earned_points: earnedPoints,
+            created_at: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log("✅ Quiz score and points saved to Firestore.");
+    } catch (err) {
+        console.error("Error saving quiz score to Firestore:", err);
+    }
 }
 
 // Fetch all observations for Explore view
 async function getAllObservations() {
-    if (!supabaseClient) return [];
+    if (!db) return [];
     try {
-        const { data, error } = await supabaseClient
-            .from('observations')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(50);
-        if (error) throw error;
-        return data || [];
+        const snap = await db.collection('observations')
+            .orderBy('created_at', 'desc')
+            .limit(50)
+            .get();
+        const data = [];
+        snap.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+        return data;
     } catch (err) {
         console.error("Error fetching all observations:", err);
         return [];
@@ -536,13 +524,9 @@ async function getAllObservations() {
 
 // Delete observation
 async function deleteObservation(id) {
-    if (!supabaseClient) return false;
+    if (!db) return false;
     try {
-        const { error } = await supabaseClient
-            .from('observations')
-            .delete()
-            .eq('id', id);
-        if (error) throw error;
+        await db.collection('observations').doc(id).delete();
         return true;
     } catch (err) {
         console.error("Error deleting observation:", err);
@@ -553,6 +537,7 @@ async function deleteObservation(id) {
 
 // Expose to window for app.js
 window.saveObservation = saveObservation;
+window.uploadMonitoringImageToSupabase = uploadMonitoringImageToSupabase;
 window.saveLacakEntry = saveLacakEntry;
 window.saveQuizScore = saveQuizScore;
 window.loadUserData = loadUserData;

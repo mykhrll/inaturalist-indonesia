@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>iNaturalist Indonesia - Jelajahi Alam</title>
     <meta name="description" content="Identifikasi tumbuhan, hewan, jamur, dan lebih banyak lagi sembari berkontribusi bagi atlas kehidupan di Bumi.">
     <meta name="theme-color" content="#74ac00">
@@ -14,6 +14,10 @@
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- Firebase CDN (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -21,7 +25,7 @@
     <link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Chart.js for Lacak feature -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js"></script>
 
     <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -180,7 +184,7 @@
                 <div class="hero-content">
                     <h1>Tempat keingintahuan Anda berkontribusi pada ilmu pengetahuan.</h1>
                     <p class="hero-sub">Identifikasi tumbuhan, hewan, jamur, dan lebih banyak lagi sembari berkontribusi bagi atlas kehidupan di Bumi.</p>
-                    <button class="btn-hero" id="btn-join-hero" onclick="document.getElementById('loginModal').style.display='flex'">Bergabunglah dengan komunitas</button>
+                    <button class="btn-hero" id="btn-join-hero">Bergabunglah dengan komunitas</button>
                     <p class="hero-tagline">Gratis, nirlaba, didukung komunitas.</p>
                 </div>
             </div>
@@ -450,7 +454,16 @@
                                 <div class="form-group"><label>Tanggal Pemantauan</label><input type="date" id="lacak-tanggal"></div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group"><label>Tinggi Tanaman (cm)</label><input type="number" id="lacak-tinggi" placeholder="Contoh: 25"></div>
+                                <div class="form-group">
+                                    <label>Tinggi Tanaman</label>
+                                    <div style="display: flex; gap: 10px;">
+                                        <input type="number" id="lacak-tinggi" placeholder="Contoh: 25" style="flex: 1;">
+                                        <select id="lacak-tinggi-satuan" style="width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                                            <option value="cm">cm</option>
+                                            <option value="m">m</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="form-group"><label>Jumlah Daun</label><input type="number" id="lacak-daun" placeholder="Contoh: 8"></div>
                             </div>
                             <div class="form-row">
@@ -524,53 +537,71 @@
                 </div>
 
                 <!-- Region Info Cards -->
-                <div class="explore-region-cards">
-                    <div class="region-card">
+                <div class="explore-region-cards" id="explore-region-cards">
+                    <div class="region-card" onclick="setExploreLocation('Sumatera')" title="Cari observasi di Sumatera">
                         <h4><i class="fas fa-map-marker-alt"></i> Sumatera</h4>
                         <div class="region-stats"><span>🌿 15.000+ spesies</span><span>🌳 Habitat: Hutan Hujan Tropis & Gambut</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Bunga Bangkai (Amorphophallus titanum), Rafflesia arnoldii, Meranti, Damar, Andalas</p>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Bunga Bangkai, Rafflesia arnoldii, Meranti, Andalas</p>
                         <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span></div>
                     </div>
-                    <div class="region-card">
+                    <div class="region-card" onclick="setExploreLocation('Jawa')" title="Cari observasi di Jawa">
                         <h4><i class="fas fa-map-marker-alt"></i> Jawa</h4>
-                        <div class="region-stats"><span>🌿 6.000+ spesies</span><span>🌳 Habitat: Hutan Musim, Hutan Pegunungan</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Tectona grandis (Jati), Edelweiss Jawa (Anaphalis javanica), Kepel, Bunga Sandat</p>
+                        <div class="region-stats"><span>🌿 6.000+ spesies</span><span>🌳 Habitat: Hutan Musim, Pegunungan</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Jati, Edelweiss Jawa, Kepel, Bunga Sandat</p>
                         <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Sangat Tinggi</span></div>
                     </div>
-                    <div class="region-card">
+                    <div class="region-card" onclick="setExploreLocation('Kalimantan')" title="Cari observasi di Kalimantan">
                         <h4><i class="fas fa-map-marker-alt"></i> Kalimantan</h4>
-                        <div class="region-stats"><span>🌿 20.000+ spesies</span><span>🌳 Habitat: Hutan Hujan Dataran Rendah & Rawa Gambut</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Kantong Semar (Nepenthes sp.), Anggrek Hitam (Coelogyne pandurata), Kayu Ulin, Tengkuwang</p>
+                        <div class="region-stats"><span>🌿 20.000+ spesies</span><span>🌳 Habitat: Hutan Hujan & Rawa Gambut</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Kantong Semar, Anggrek Hitam, Kayu Ulin</p>
                         <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat Tinggi</span></div>
                     </div>
-                    <div class="region-card">
+                    <div class="region-card" onclick="setExploreLocation('Papua')" title="Cari observasi di Papua">
                         <h4><i class="fas fa-map-marker-alt"></i> Papua</h4>
-                        <div class="region-stats"><span>🌿 25.000+ spesies</span><span>🌳 Habitat: Hutan Hujan, Mangrove, & Alpin</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Matoa, Sagu, Anggrek Papua (Bulbophyllum sp.), Buah Merah, Pohon Pakis</p>
+                        <div class="region-stats"><span>🌿 25.000+ spesies</span><span>🌳 Habitat: Hutan Hujan, Mangrove, Alpin</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Matoa, Sagu, Anggrek Papua, Buah Merah</p>
                         <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat Tinggi</span></div>
                     </div>
-                    <div class="region-card">
+                    <div class="region-card" onclick="setExploreLocation('Sulawesi')" title="Cari observasi di Sulawesi">
                         <h4><i class="fas fa-map-marker-alt"></i> Sulawesi</h4>
-                        <div class="region-stats"><span>🌿 10.000+ spesies</span><span>🌳 Habitat: Hutan Hujan Pegunungan & Karst</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Kayu Eboni (Diospyros celebica), Anggrek Serat (Dendrobium utile), Banyan, Cengkeh Hutan</p>
+                        <div class="region-stats"><span>🌿 10.000+ spesies</span><span>🌳 Habitat: Hutan Pegunungan & Karst</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Kayu Eboni, Anggrek Serat, Banyan</p>
                         <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat Tinggi</span></div>
                     </div>
-                    <div class="region-card">
+                    <div class="region-card" onclick="setExploreLocation('Bali')" title="Cari observasi di Bali & Nusa Tenggara">
                         <h4><i class="fas fa-map-marker-alt"></i> Bali & Nusa Tenggara</h4>
-                        <div class="region-stats"><span>🌿 5.000+ spesies</span><span>🌳 Habitat: Hutan Musim, Sabana, & Pesisir</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Cendana (Santalum album), Pohon Lontar (Borassus flabellifer), Ampupu (Eucalyptus urophylla), Majegau</p>
+                        <div class="region-stats"><span>🌿 5.000+ spesies</span><span>🌳 Habitat: Sabana, Pesisir, Musim</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Cendana, Pohon Lontar, Ampupu</p>
                         <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span></div>
                     </div>
-                    <div class="region-card">
+                    
+                    <!-- Hidden Extra Cards -->
+                    <div class="region-card extra-region hidden-region" onclick="setExploreLocation('Maluku')" title="Cari observasi di Maluku">
                         <h4><i class="fas fa-map-marker-alt"></i> Maluku</h4>
-                        <div class="region-stats"><span>🌿 8.000+ spesies</span><span>🌳 Habitat: Hutan Hujan Tropis Kepulauan</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Pala (Myristica fragrans), Cengkeh (Syzygium aromaticum), Sagu (Metroxylon sagu), Anggrek Larat</p>
+                        <div class="region-stats"><span>🌿 8.000+ spesies</span><span>🌳 Habitat: Hutan Hujan Kepulauan</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Pala, Cengkeh, Sagu, Anggrek Larat</p>
                         <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat Tinggi</span></div>
+                    </div>
+                    <div class="region-card extra-region hidden-region" onclick="setExploreLocation('Kepulauan Riau')" title="Cari observasi di Riau & Kepulauan Riau">
+                        <h4><i class="fas fa-map-marker-alt"></i> Riau & Kepulauan Riau</h4>
+                        <div class="region-stats"><span>🌿 4.500+ spesies</span><span>🌳 Habitat: Hutan Rawa Gambut & Pesisir</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Nibung, Bintangur, Meranti Paya</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span></div>
+                    </div>
+                    <div class="region-card extra-region hidden-region" onclick="setExploreLocation('Bangka Belitung')" title="Cari observasi di Bangka Belitung">
+                        <h4><i class="fas fa-map-marker-alt"></i> Bangka Belitung</h4>
+                        <div class="region-stats"><span>🌿 3.000+ spesies</span><span>🌳 Habitat: Hutan Kerangas, Hutan Pesisir</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Pelawan, Gaharu, Kantong Semar Babel</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-medium">Keanekaragaman Sedang</span></div>
                     </div>
                 </div>
 
+                <div style="text-align: center; margin-top: 15px; margin-bottom: 30px;">
+                    <button class="btn-outline-sm" id="btn-more-regions" onclick="toggleExtraRegions()"><i class="fas fa-chevron-down"></i> Selengkapnya</button>
+                </div>
+
                 <!-- View Switcher -->
-                <div class="explore-views">
+                <div class="explore-views" id="explore-views">
                     <button class="view-btn" onclick="switchExploreView('map')"><i class="fas fa-map"></i> Peta</button>
                     <button class="view-btn active" onclick="switchExploreView('grid')"><i class="fas fa-th"></i> Grid</button>
                     <button class="view-btn" onclick="switchExploreView('list')"><i class="fas fa-list"></i> Daftar</button>
@@ -746,6 +777,18 @@
                             <p>Hubungan antara masyarakat tradisional Indonesia dengan tumbuhan obat, pangan, dan ritual.</p>
                             <span class="module-tag">Etnobotani</span>
                         </div>
+                        <div class="module-card" onclick="toggleModule('mod7')">
+                            <div class="module-icon">📐</div>
+                            <h4>Analisis Vegetasi</h4>
+                            <p>Rumus-rumus penting untuk mengukur kepadatan, frekuensi, dan dominansi suatu spesies.</p>
+                            <span class="module-tag">Analisis Vegetasi</span>
+                        </div>
+                        <div class="module-card" onclick="toggleModule('mod8')">
+                            <div class="module-icon">📊</div>
+                            <h4>Indeks Keanekaragaman Hayati</h4>
+                            <p>Pemahaman dan perhitungan Indeks Shannon-Wiener untuk mengetahui keseimbangan ekosistem.</p>
+                            <span class="module-tag">Biodiversitas</span>
+                        </div>
                     </div>
                 </div>
 
@@ -760,7 +803,7 @@
                 <!-- Ecological Roles -->
                 <div class="belajar-section">
                     <h3><i class="fas fa-tree"></i> Peran Ekologis Spesies yang Diidentifikasi</h3>
-                    <div class="eco-role-cards">
+                    <div class="eco-role-cards" id="eco-role-container">
                         <div class="eco-card">
                             <div class="eco-species"><strong>Anggrek Bulan</strong> (<em>Phalaenopsis amabilis</em>)</div>
                             <div class="eco-roles">
@@ -780,23 +823,6 @@
                     </div>
                 </div>
 
-                <!-- Quiz Section -->
-                <div class="belajar-section">
-                    <h3><i class="fas fa-question-circle"></i> Kuis Evaluasi Pemahaman</h3>
-                    <div class="quiz-container" id="quiz-container">
-                        <div class="quiz-progress"><span id="quiz-progress-text">Pertanyaan 1 dari 5</span><div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill" style="width:20%"></div></div></div>
-                        <div class="quiz-question" id="quiz-question">Apa peran utama tumbuhan sebagai produsen dalam ekosistem?</div>
-                        <div class="quiz-options" id="quiz-options">
-                            <button class="quiz-option" onclick="checkQuiz(this, true)">Mengubah energi cahaya menjadi energi kimia melalui fotosintesis</button>
-                            <button class="quiz-option" onclick="checkQuiz(this, false)">Menguraikan bahan organik menjadi anorganik</button>
-                            <button class="quiz-option" onclick="checkQuiz(this, false)">Memangsa organisme yang lebih kecil</button>
-                            <button class="quiz-option" onclick="checkQuiz(this, false)">Menyerap nutrisi dari organisme inang</button>
-                        </div>
-                        <div class="quiz-feedback hidden" id="quiz-feedback"></div>
-                        <button class="btn-green hidden" id="quiz-next" onclick="nextQuiz()">Pertanyaan Berikutnya <i class="fas fa-arrow-right"></i></button>
-                    </div>
-                    <div class="quiz-score hidden" id="quiz-score"></div>
-                </div>
             </div>
         </section>
 
@@ -868,32 +894,35 @@
         <div class="modal-box">
             <button class="modal-close" id="close-modal"><i class="fas fa-times"></i></button>
             <div class="modal-logo"><span class="logo-i">i</span><span class="logo-text">Naturalist</span></div>
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="tab-login">Masuk</button>
-                <button class="auth-tab" id="tab-register">Daftar</button>
+            <!-- Single Unified Auth Form -->
+            <div id="auth-main-section">
+                <form id="form-auth-unified" class="auth-form active" style="margin-top: 15px;" onsubmit="return false;">
+                    <div class="form-group"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="nama@email.com" required></div>
+                    <div class="form-group"><label for="auth-password">Kata Sandi</label><input type="password" id="auth-password" placeholder="Minimal 6 karakter" required></div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn-green" style="flex: 1;" id="btn-submit-login">Masuk</button>
+                        <button class="btn-green" style="flex: 1; background-color: #f1f5f9; color: #333; border: 1px solid #ccc;" id="btn-submit-register">Buat Akun</button>
+                    </div>
+                    <p id="auth-error" class="error-msg"></p>
+                </form>
+
+                <div class="auth-divider"><span>ATAU</span></div>
+                
+                <button class="btn-google" id="btn-google-auth">
+                    <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Lanjutkan dengan Google
+                </button>
+                <button class="btn-google" id="btn-anon-auth" style="margin-top: 10px; background-color: #f1f5f9; color: #333; border: 1px solid #ddd;">
+                    <i class="fas fa-user-secret google-icon" style="color:#555; width:20px; text-align:center;"></i>
+                    Lanjutkan sebagai Tamu
+                </button>
             </div>
-            <form id="form-login" class="auth-form active" onsubmit="return false;">
-                <div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email" placeholder="nama@email.com" required></div>
-                <div class="form-group"><label for="login-password">Kata Sandi</label><input type="password" id="login-password" placeholder="Masukkan kata sandi" required></div>
-                <button class="btn-green w-full" id="btn-submit-login">Masuk</button>
-                <p id="login-error" class="error-msg"></p>
-            </form>
-            <form id="form-register" class="auth-form" onsubmit="return false;">
-                <div class="form-group"><label for="reg-email">Email</label><input type="email" id="reg-email" placeholder="nama@email.com" required></div>
-                <div class="form-group"><label for="reg-password">Kata Sandi</label><input type="password" id="reg-password" placeholder="Minimal 6 karakter" required></div>
-                <button class="btn-green w-full" id="btn-submit-register">Buat Akun</button>
-                <p id="reg-error" class="error-msg"></p>
-            </form>
-            <div class="auth-divider"><span>ATAU</span></div>
-            <button class="btn-google" id="btn-google-auth">
-                <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-                Lanjutkan dengan Google
-            </button>
         </div>
     </div>
 
@@ -909,6 +938,8 @@
             </div>
         </div>
     </div>
+
+
 
     <!-- ===== OBSERVATION DETAIL MODAL ===== -->
     <div id="obs-detail-modal" class="modal-overlay">
