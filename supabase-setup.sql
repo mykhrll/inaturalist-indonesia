@@ -9,3 +9,9 @@ CREATE POLICY "Izinkan lihat publik dari images"
 ON storage.objects FOR SELECT
 TO public
 USING ( bucket_id = 'images' );
+
+-- Mengizinkan siapa saja (publik/anonim) menghapus file dari bucket 'images'
+CREATE POLICY "Izinkan hapus publik dari images"
+ON storage.objects FOR DELETE
+TO public
+USING ( bucket_id = 'images' );

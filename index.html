@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>iNaturalist Indonesia - Jelajahi Alam</title>
-    <meta name="description" content="Identifikasi tumbuhan, hewan, jamur, dan lebih banyak lagi sembari berkontribusi bagi atlas kehidupan di Bumi.">
+    <meta name="description"
+        content="Identifikasi tumbuhan, hewan, jamur, dan lebih banyak lagi sembari berkontribusi bagi atlas kehidupan di Bumi.">
     <meta name="theme-color" content="#74ac00">
 
     <!-- PWA Manifest -->
@@ -22,16 +25,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Chart.js for Lacak feature -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js"></script>
 
     <!-- Leaflet CSS for Map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
     <!-- ===== NAVBAR: LOGGED OUT ===== -->
@@ -64,13 +71,15 @@
                             <a href="https://help.inaturalist.org" target="_blank">Memulai</a>
                             <a href="https://help.inaturalist.org" target="_blank">Video Tutorial</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="donate-link" onclick="openGenericPage('Donasi')"><i class="fas fa-heart"></i> Donasi</a>
+                            <a href="#" class="donate-link" onclick="openGenericPage('Donasi')"><i
+                                    class="fas fa-heart"></i> Donasi</a>
                         </div>
                     </li>
                 </ul>
             </div>
             <div class="nav-right">
-                <a href="#" class="btn-donate-nav" onclick="openGenericPage('Donasi'); return false;"><i class="fas fa-heart"></i> Donasi</a>
+                <a href="#" class="btn-donate-nav" onclick="openGenericPage('Donasi'); return false;"><i
+                        class="fas fa-heart"></i> Donasi</a>
                 <a href="#" class="nav-auth-link" id="btn-open-login">Masuk atau Daftar</a>
             </div>
         </div>
@@ -111,7 +120,8 @@
                             <a href="https://help.inaturalist.org" target="_blank">Bantuan</a>
                             <a href="https://help.inaturalist.org" target="_blank">Video Tutorial</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="donate-link" onclick="openGenericPage('Donasi'); return false;"><i class="fas fa-heart"></i> Donasi</a>
+                            <a href="#" class="donate-link" onclick="openGenericPage('Donasi'); return false;"><i
+                                    class="fas fa-heart"></i> Donasi</a>
                         </div>
                     </li>
                 </ul>
@@ -121,28 +131,34 @@
                     <i class="fas fa-plus"></i> Unggah
                 </button>
                 <div class="nav-icon-wrapper">
-                    <a href="#" class="nav-icon-btn" title="Pesan" onclick="toggleDropdown('msg-dropdown'); return false;">
+                    <a href="#" class="nav-icon-btn" title="Pesan"
+                        onclick="toggleDropdown('msg-dropdown'); return false;">
                         <i class="fas fa-envelope"></i>
                     </a>
                     <div class="header-dropdown" id="msg-dropdown">
                         <div class="header-dropdown-header">Pesan</div>
                         <div class="header-dropdown-body">Tidak ada pesan baru.</div>
-                        <a href="#" class="header-dropdown-footer" onclick="openGenericPage('Semua Pesan'); toggleDropdown('msg-dropdown'); return false;">Lihat semua pesan</a>
+                        <a href="#" class="header-dropdown-footer"
+                            onclick="openGenericPage('Semua Pesan'); toggleDropdown('msg-dropdown'); return false;">Lihat
+                            semua pesan</a>
                     </div>
                 </div>
-                
+
                 <div class="nav-icon-wrapper">
-                    <a href="#" class="nav-icon-btn" title="Notifikasi" onclick="toggleDropdown('notif-dropdown'); return false;">
+                    <a href="#" class="nav-icon-btn" title="Notifikasi"
+                        onclick="toggleDropdown('notif-dropdown'); return false;">
                         <i class="fas fa-bell"></i>
                         <span class="nav-badge">0</span>
                     </a>
                     <div class="header-dropdown" id="notif-dropdown">
                         <div class="header-dropdown-header">Notifikasi</div>
                         <div class="header-dropdown-body">Tidak ada notifikasi baru.</div>
-                        <a href="#" class="header-dropdown-footer" onclick="openGenericPage('Semua Notifikasi'); toggleDropdown('notif-dropdown'); return false;">Lihat semua notifikasi</a>
+                        <a href="#" class="header-dropdown-footer"
+                            onclick="openGenericPage('Semua Notifikasi'); toggleDropdown('notif-dropdown'); return false;">Lihat
+                            semua notifikasi</a>
                     </div>
                 </div>
-                
+
                 <div class="profile-trigger" id="profile-trigger" onclick="toggleDropdown('profile-dropdown')">
                     <div class="nav-avatar" id="nav-avatar-btn" title="Profil">
                         <span id="avatar-content">U</span>
@@ -150,17 +166,20 @@
                     <i class="fas fa-chevron-down profile-caret"></i>
                     <div class="profile-dropdown" id="profile-dropdown">
                         <div class="profile-dropdown-header" id="profile-name">Pengguna</div>
-                        <a href="#" onclick="navigateTo('view-dashboard')"><i class="fas fa-tachometer-alt"></i> Dasbor</a>
+                        <a href="#" onclick="navigateTo('view-dashboard')"><i class="fas fa-tachometer-alt"></i>
+                            Dasbor</a>
                         <a href="#" onclick="navigateTo('view-lacak')"><i class="fas fa-eye"></i> Ubah Pengamatan</a>
                         <a href="#" onclick="openGenericPage('Kalender')"><i class="fas fa-calendar"></i> Kalender</a>
-                        <a href="#" onclick="navigateTo('view-identifikasi')"><i class="fas fa-leaf"></i> Identifikasi</a>
+                        <a href="#" onclick="navigateTo('view-identifikasi')"><i class="fas fa-leaf"></i>
+                            Identifikasi</a>
                         <a href="#" onclick="openGenericPage('Daftar')"><i class="fas fa-list"></i> Daftar</a>
                         <a href="#" onclick="openGenericPage('Jurnal')"><i class="fas fa-book"></i> Jurnal</a>
                         <a href="#" onclick="openGenericPage('Favorit')"><i class="fas fa-star"></i> Favorit</a>
                         <a href="#" onclick="navigateTo('view-kontribusi')"><i class="fas fa-folder"></i> Proyek</a>
                         <div class="dropdown-divider"></div>
                         <a href="#" onclick="openGenericPage('Profil')"><i class="fas fa-user"></i> Profil</a>
-                        <a href="#" onclick="openGenericPage('Pengaturan')"><i class="fas fa-cog"></i> Pengaturan Akun</a>
+                        <a href="#" onclick="openGenericPage('Pengaturan')"><i class="fas fa-cog"></i> Pengaturan
+                            Akun</a>
                         <div class="dropdown-divider"></div>
                         <button class="logout-btn" id="btn-logout"><i class="fas fa-sign-out-alt"></i> Keluar</button>
                     </div>
@@ -183,7 +202,8 @@
                 <div class="hero-overlay"></div>
                 <div class="hero-content">
                     <h1>Tempat keingintahuan Anda berkontribusi pada ilmu pengetahuan.</h1>
-                    <p class="hero-sub">Identifikasi tumbuhan, hewan, jamur, dan lebih banyak lagi sembari berkontribusi bagi atlas kehidupan di Bumi.</p>
+                    <p class="hero-sub">Identifikasi tumbuhan, hewan, jamur, dan lebih banyak lagi sembari berkontribusi
+                        bagi atlas kehidupan di Bumi.</p>
                     <button class="btn-hero" id="btn-join-hero">Bergabunglah dengan komunitas</button>
                     <p class="hero-tagline">Gratis, nirlaba, didukung komunitas.</p>
                 </div>
@@ -194,27 +214,32 @@
                 <h2>Dengan iNaturalist, Anda dapat:</h2>
                 <div class="features-row">
                     <div class="feature-item" onclick="navigateTo('view-identifikasi')">
-                        <div class="feature-icon"><i class="fas fa-leaf"></i><i class="fas fa-check-circle feature-check"></i></div>
+                        <div class="feature-icon"><i class="fas fa-leaf"></i><i
+                                class="fas fa-check-circle feature-check"></i></div>
                         <h3>Identifikasi</h3>
                         <p>tumbuhan, hewan, jamur, dll.</p>
                     </div>
                     <div class="feature-item" onclick="navigateTo('view-lacak')">
-                        <div class="feature-icon"><i class="fas fa-paw"></i><i class="fas fa-check-circle feature-check"></i></div>
+                        <div class="feature-icon"><i class="fas fa-paw"></i><i
+                                class="fas fa-check-circle feature-check"></i></div>
                         <h3>Lacak</h3>
                         <p>pantau pertumbuhan & perkembangan tumbuhan</p>
                     </div>
                     <div class="feature-item" onclick="navigateTo('view-explore')">
-                        <div class="feature-icon"><i class="fas fa-binoculars"></i><i class="fas fa-search feature-sub"></i></div>
+                        <div class="feature-icon"><i class="fas fa-binoculars"></i><i
+                                class="fas fa-search feature-sub"></i></div>
                         <h3>Temukan</h3>
                         <p>persebaran & keanekaragaman hayati</p>
                     </div>
                     <div class="feature-item" onclick="navigateTo('view-kontribusi')">
-                        <div class="feature-icon"><i class="fas fa-globe-americas"></i><i class="fas fa-map-pin feature-sub"></i></div>
+                        <div class="feature-icon"><i class="fas fa-globe-americas"></i><i
+                                class="fas fa-map-pin feature-sub"></i></div>
                         <h3>Berkontribusi</h3>
                         <p>bagi ilmu pengetahuan</p>
                     </div>
                     <div class="feature-item" onclick="navigateTo('view-belajar')">
-                        <div class="feature-icon"><i class="fas fa-graduation-cap"></i><i class="fas fa-lightbulb feature-sub"></i></div>
+                        <div class="feature-icon"><i class="fas fa-graduation-cap"></i><i
+                                class="fas fa-lightbulb feature-sub"></i></div>
                         <h3>Belajar</h3>
                         <p>ekologi tumbuhan interaktif</p>
                     </div>
@@ -225,45 +250,65 @@
             <div class="section-stories">
                 <h2>Kekuatan sains komunitas</h2>
                 <div class="stories-grid">
-                    <a href="https://www.mongabay.co.id/2023/11/01/menemukan-kembali-spesies-yang-hilang-di-indonesia/" target="_blank" class="story-card story-link">
-                        <div class="story-image" style="background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600&auto=format&fit=crop')">
-                            <div class="story-image-overlay"><h3>Menemukan kembali spesies yang hilang</h3></div>
+                    <a href="https://www.mongabay.co.id/2023/11/01/menemukan-kembali-spesies-yang-hilang-di-indonesia/"
+                        target="_blank" class="story-card story-link">
+                        <div class="story-image"
+                            style="background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600&auto=format&fit=crop')">
+                            <div class="story-image-overlay">
+                                <h3>Menemukan kembali spesies yang hilang</h3>
+                            </div>
                         </div>
                         <div class="story-text">
-                            <p>Penemuan kembali anggrek langka di pedalaman hutan tropis yang sebelumnya dianggap punah selama puluhan tahun.</p>
+                            <p>Penemuan kembali anggrek langka di pedalaman hutan tropis yang sebelumnya dianggap punah
+                                selama puluhan tahun.</p>
                             <span class="story-credit">Dilihat oleh peneliti lokal di Kalimantan</span>
                         </div>
                     </a>
-                    <a href="https://www.mongabay.co.id/2024/02/15/spesies-baru-bagi-ilmu-pengetahuan-dari-papua/" target="_blank" class="story-card story-link">
-                        <div class="story-image" style="background-image: url('https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=600&auto=format&fit=crop')">
-                            <div class="story-image-overlay"><h3>Menemukan spesies baru bagi ilmu pengetahuan</h3></div>
+                    <a href="https://www.mongabay.co.id/2024/02/15/spesies-baru-bagi-ilmu-pengetahuan-dari-papua/"
+                        target="_blank" class="story-card story-link">
+                        <div class="story-image"
+                            style="background-image: url('https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=600&auto=format&fit=crop')">
+                            <div class="story-image-overlay">
+                                <h3>Menemukan spesies baru bagi ilmu pengetahuan</h3>
+                            </div>
                         </div>
                         <div class="story-text">
-                            <p>Berbagai varian tumbuhan endemik unik terus ditemukan oleh komunitas peneliti independen di Papua.</p>
+                            <p>Berbagai varian tumbuhan endemik unik terus ditemukan oleh komunitas peneliti independen
+                                di Papua.</p>
                             <span class="story-credit">Dilihat oleh citizen scientist di Papua</span>
                         </div>
                     </a>
-                    <a href="https://www.mongabay.co.id/2024/01/10/melindungi-ekosistem-lokal-hutan-hujan/" target="_blank" class="story-card story-link">
-                        <div class="story-image" style="background-image: url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=600&auto=format&fit=crop')">
-                            <div class="story-image-overlay"><h3>Melindungi ekosistem lokal</h3></div>
+                    <a href="https://www.mongabay.co.id/2024/01/10/melindungi-ekosistem-lokal-hutan-hujan/"
+                        target="_blank" class="story-card story-link">
+                        <div class="story-image"
+                            style="background-image: url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=600&auto=format&fit=crop')">
+                            <div class="story-image-overlay">
+                                <h3>Melindungi ekosistem lokal</h3>
+                            </div>
                         </div>
                         <div class="story-text">
-                            <p>Relawan lokal berkumpul untuk mendokumentasikan dan memantau status konservasi tumbuhan langka Nusantara.</p>
+                            <p>Relawan lokal berkumpul untuk mendokumentasikan dan memantau status konservasi tumbuhan
+                                langka Nusantara.</p>
                             <span class="story-credit">Dilihat oleh komunitas konservasi di Sumatera</span>
                         </div>
                     </a>
                 </div>
-                <div class="section-cta"><a href="https://www.inaturalist.org/blog" target="_blank" class="btn-green">Baca lebih banyak cerita</a></div>
+                <div class="section-cta"><a href="https://www.inaturalist.org/blog" target="_blank"
+                        class="btn-green">Baca lebih banyak cerita</a></div>
             </div>
 
             <!-- Stats -->
             <div class="section-stats">
                 <h2>Setiap observasi menceritakan sebuah kisah</h2>
                 <div class="stats-grid">
-                    <div class="stat-item"><span class="stat-number">300M+</span><span class="stat-desc">observasi berkontribusi pada sains</span></div>
-                    <div class="stat-item"><span class="stat-number">550.000+</span><span class="stat-desc">spesies terdokumentasi</span></div>
-                    <div class="stat-item"><span class="stat-number">7.000+</span><span class="stat-desc">makalah ilmiah mengutip data</span></div>
-                    <div class="stat-item"><span class="stat-number">500+</span><span class="stat-desc">spesies ditemukan kembali</span></div>
+                    <div class="stat-item"><span class="stat-number">300M+</span><span class="stat-desc">observasi
+                            berkontribusi pada sains</span></div>
+                    <div class="stat-item"><span class="stat-number">550.000+</span><span class="stat-desc">spesies
+                            terdokumentasi</span></div>
+                    <div class="stat-item"><span class="stat-number">7.000+</span><span class="stat-desc">makalah ilmiah
+                            mengutip data</span></div>
+                    <div class="stat-item"><span class="stat-number">500+</span><span class="stat-desc">spesies
+                            ditemukan kembali</span></div>
                 </div>
             </div>
 
@@ -271,9 +316,21 @@
             <div class="section-howitworks">
                 <h2>Cara kerjanya</h2>
                 <div class="steps-grid">
-                    <div class="step-item"><div class="step-number">1</div><h3>Amati</h3><p>Foto tumbuhan, hewan, jamur, atau organisme liar lainnya.</p></div>
-                    <div class="step-item"><div class="step-number">2</div><h3>Identifikasi</h3><p>AI memberikan saran identifikasi dan komunitas mengonfirmasinya.</p></div>
-                    <div class="step-item"><div class="step-number">3</div><h3>Kontribusi</h3><p>Observasi Anda menjadi data terbuka untuk ilmuwan di seluruh dunia.</p></div>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <h3>Amati</h3>
+                        <p>Foto tumbuhan, hewan, jamur, atau organisme liar lainnya.</p>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <h3>Identifikasi</h3>
+                        <p>AI memberikan saran identifikasi dan komunitas mengonfirmasinya.</p>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <h3>Kontribusi</h3>
+                        <p>Observasi Anda menjadi data terbuka untuk ilmuwan di seluruh dunia.</p>
+                    </div>
                 </div>
             </div>
 
@@ -282,12 +339,14 @@
                 <div class="testimonial-cards">
                     <div class="testimonial-card">
                         <i class="fas fa-quote-left tq-icon"></i>
-                        <p>"iNaturalist telah membuka mata saya terhadap keanekaragaman hayati yang luar biasa di sekitar kita."</p>
+                        <p>"iNaturalist telah membuka mata saya terhadap keanekaragaman hayati yang luar biasa di
+                            sekitar kita."</p>
                         <span class="testimonial-author">— Dzivula Gube, Marine Conservationist</span>
                     </div>
                     <div class="testimonial-card">
                         <i class="fas fa-quote-left tq-icon"></i>
-                        <p>"Datang untuk identifikasi, bertahan untuk komunitasnya. Tempat paling ramah di internet."</p>
+                        <p>"Datang untuk identifikasi, bertahan untuk komunitasnya. Tempat paling ramah di internet."
+                        </p>
                         <span class="testimonial-author">— Chris Alice Kratzer, Field Guide Author</span>
                     </div>
                     <div class="testimonial-card">
@@ -309,11 +368,29 @@
             <div class="section-faq">
                 <h2>FAQs</h2>
                 <div class="faq-list">
-                    <details class="faq-item"><summary>Bisakah saya mengunggah foto yang sudah saya miliki? <i class="fas fa-chevron-right"></i></summary><p>Ya! Anda dapat mengunggah foto dari galeri ponsel atau komputer Anda.</p></details>
-                    <details class="faq-item"><summary>Siapa yang bisa melakukan sains dengan observasi? <i class="fas fa-chevron-right"></i></summary><p>Siapa saja! Data "Research Grade" tersedia secara terbuka untuk ribuan publikasi ilmiah.</p></details>
-                    <details class="faq-item"><summary>Apa arti "research grade"? <i class="fas fa-chevron-right"></i></summary><p>Observasi dengan foto, tanggal, lokasi, dan setidaknya dua identifikasi yang sepakat.</p></details>
-                    <details class="faq-item"><summary>Apakah saya perlu tahu apa yang saya lihat? <i class="fas fa-chevron-right"></i></summary><p>Tidak! AI dan komunitas ahli akan membantu mengidentifikasi observasi Anda.</p></details>
-                    <details class="faq-item"><summary>Apakah saya harus menggunakan aplikasi? <i class="fas fa-chevron-right"></i></summary><p>Tidak, Anda juga bisa menggunakan situs web ini.</p></details>
+                    <details class="faq-item">
+                        <summary>Bisakah saya mengunggah foto yang sudah saya miliki? <i
+                                class="fas fa-chevron-right"></i></summary>
+                        <p>Ya! Anda dapat mengunggah foto dari galeri ponsel atau komputer Anda.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Siapa yang bisa melakukan sains dengan observasi? <i class="fas fa-chevron-right"></i>
+                        </summary>
+                        <p>Siapa saja! Data "Research Grade" tersedia secara terbuka untuk ribuan publikasi ilmiah.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Apa arti "research grade"? <i class="fas fa-chevron-right"></i></summary>
+                        <p>Observasi dengan foto, tanggal, lokasi, dan setidaknya dua identifikasi yang sepakat.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Apakah saya perlu tahu apa yang saya lihat? <i class="fas fa-chevron-right"></i>
+                        </summary>
+                        <p>Tidak! AI dan komunitas ahli akan membantu mengidentifikasi observasi Anda.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Apakah saya harus menggunakan aplikasi? <i class="fas fa-chevron-right"></i></summary>
+                        <p>Tidak, Anda juga bisa menggunakan situs web ini.</p>
+                    </details>
                 </div>
             </div>
 
@@ -336,14 +413,15 @@
                 <div class="dashboard-grid">
                     <div class="dashboard-main">
                         <div class="dash-tabs">
-                            <button class="dash-tab active" onclick="switchDashTab(this, 'Semua Kabar')">Semua Kabar</button>
+                            <button class="dash-tab active" onclick="switchDashTab(this, 'Semua Kabar')">Semua
+                                Kabar</button>
                             <button class="dash-tab" onclick="switchDashTab(this, 'Konten Anda')">Konten Anda</button>
                             <button class="dash-tab" onclick="switchDashTab(this, 'Mengikuti')">Mengikuti</button>
                         </div>
                         <div class="dash-welcome-card">
                             <h3><i class="fas fa-seedling"></i> Selamat Datang di iNaturalist Indonesia!</h3>
                             <p>Mari jelajahi, pelajari, dan berkontribusi untuk keanekaragaman hayati kita.</p>
-                            
+
                             <div class="features-row dashboard-features-row">
                                 <div class="feature-item" onclick="navigateTo('view-identifikasi')">
                                     <div class="feature-icon"><i class="fas fa-leaf"></i></div>
@@ -372,19 +450,30 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="dash-empty"><i class="fas fa-stream"></i><p>Belum ada kabar terbaru. Mulai unggah pengamatan atau ikuti naturalis lain!</p></div>
+                        <div class="dash-empty"><i class="fas fa-stream"></i>
+                            <p>Belum ada kabar terbaru. Mulai unggah pengamatan atau ikuti naturalis lain!</p>
+                        </div>
                     </div>
                     <div class="dashboard-sidebar">
-                        <button class="btn-upload-big" onclick="navigateTo('view-identifikasi')"><i class="fas fa-plus-circle"></i> Tambahkan Pengamatan</button>
+                        <button class="btn-upload-big" onclick="navigateTo('view-identifikasi')"><i
+                                class="fas fa-plus-circle"></i> Tambahkan Pengamatan</button>
                         <div class="sidebar-card">
                             <h4>Blog iNaturalist</h4>
-                            <div class="sidebar-item"><span class="sidebar-date">Jun 2026</span><a href="https://www.inaturalist.org/blog" target="_blank">Pembaruan Fitur: Identifikasi AI yang Lebih Akurat</a></div>
-                            <div class="sidebar-item"><span class="sidebar-date">Jun 2026</span><a href="https://www.inaturalist.org/blog" target="_blank">Hasil City Nature Challenge 2026</a></div>
+                            <div class="sidebar-item"><span class="sidebar-date">Jun 2026</span><a
+                                    href="https://www.inaturalist.org/blog" target="_blank">Pembaruan Fitur:
+                                    Identifikasi AI yang Lebih Akurat</a></div>
+                            <div class="sidebar-item"><span class="sidebar-date">Jun 2026</span><a
+                                    href="https://www.inaturalist.org/blog" target="_blank">Hasil City Nature Challenge
+                                    2026</a></div>
                         </div>
                         <div class="sidebar-card">
                             <h4>Aktivitas Forum</h4>
-                            <div class="sidebar-item"><a href="https://forum.inaturalist.org" target="_blank">Cara mengidentifikasi anggrek di Indonesia</a><span class="sidebar-meta">12 balasan • 2 jam lalu</span></div>
-                            <div class="sidebar-item"><a href="https://forum.inaturalist.org" target="_blank">Tips fotografi makro untuk identifikasi</a><span class="sidebar-meta">8 balasan • 5 jam lalu</span></div>
+                            <div class="sidebar-item"><a href="https://forum.inaturalist.org" target="_blank">Cara
+                                    mengidentifikasi anggrek di Indonesia</a><span class="sidebar-meta">12 balasan • 2
+                                    jam lalu</span></div>
+                            <div class="sidebar-item"><a href="https://forum.inaturalist.org" target="_blank">Tips
+                                    fotografi makro untuk identifikasi</a><span class="sidebar-meta">8 balasan • 5 jam
+                                    lalu</span></div>
                         </div>
                     </div>
                 </div>
@@ -400,7 +489,9 @@
                 </div>
             </div>
             <div class="feature-description">
-                <p><strong>Fitur Pengembangan:</strong> Selain identifikasi spesies, sistem ini menampilkan <em>persebaran di Indonesia & dunia</em>, <em>karakteristik habitat</em>, <em>fun fact</em>, dan <em>minimal 3 referensi jurnal open access (APA Style + DOI aktif)</em>.</p>
+                <p><strong>Fitur Pengembangan:</strong> Selain identifikasi spesies, sistem ini menampilkan
+                    <em>persebaran di Indonesia & dunia</em>, <em>karakteristik habitat</em>, <em>fun fact</em>, dan
+                    <em>minimal 3 referensi jurnal open access (APA Style + DOI aktif)</em>.</p>
             </div>
             <div class="identify-wrapper">
                 <div class="identify-container">
@@ -409,14 +500,17 @@
                             <div class="upload-icon-wrap"><i class="fas fa-cloud-upload-alt"></i></div>
                             <h3>Seret & lepas foto atau</h3>
                             <input type="file" id="image-input" accept="image/*" hidden>
-                            <button class="btn-blue" onclick="document.getElementById('image-input').click()"><i class="fas fa-folder-open"></i> Pilih berkas</button>
+                            <button class="btn-blue" onclick="document.getElementById('image-input').click()"><i
+                                    class="fas fa-folder-open"></i> Pilih berkas</button>
                             <p class="upload-hint">Mendukung format JPG, PNG, WEBP. Maks 4MB.</p>
                         </div>
                         <div id="image-preview-container" class="hidden">
                             <img id="image-preview" src="" alt="Preview">
                             <div class="preview-actions">
-                                <button class="btn-outline" onclick="document.getElementById('image-input').click()"><i class="fas fa-redo"></i> Ganti Foto</button>
-                                <button class="btn-green btn-analyze" id="btn-analyze"><i class="fas fa-magic"></i> Analisis Sekarang</button>
+                                <button class="btn-outline" onclick="document.getElementById('image-input').click()"><i
+                                        class="fas fa-redo"></i> Ganti Foto</button>
+                                <button class="btn-green btn-analyze" id="btn-analyze"><i class="fas fa-magic"></i>
+                                    Analisis Sekarang</button>
                             </div>
                         </div>
                     </div>
@@ -441,7 +535,10 @@
                 </div>
             </div>
             <div class="feature-description">
-                <p><strong>Fitur Pengembangan:</strong> Sistem pemantauan pertumbuhan & perkembangan tumbuhan secara berkala. Mencatat kondisi tumbuhan pada waktu berbeda, menampilkan <em>riwayat pertumbuhan</em>, <em>fase berbunga/berbuah</em>, dan <em>perubahan kondisi</em> dalam bentuk grafik dan dokumentasi visual.</p>
+                <p><strong>Fitur Pengembangan:</strong> Sistem pemantauan pertumbuhan & perkembangan tumbuhan secara
+                    berkala. Mencatat kondisi tumbuhan pada waktu berbeda, menampilkan <em>riwayat pertumbuhan</em>,
+                    <em>fase berbunga/berbuah</em>, dan <em>perubahan kondisi</em> dalam bentuk grafik dan dokumentasi
+                    visual.</p>
             </div>
             <div class="lacak-wrapper">
                 <div class="lacak-container">
@@ -450,21 +547,26 @@
                         <h3><i class="fas fa-plus-circle"></i> Tambahkan Catatan Pemantauan</h3>
                         <div class="lacak-form">
                             <div class="form-row">
-                                <div class="form-group"><label>Nama Tumbuhan</label><input type="text" id="lacak-nama" placeholder="Contoh: Anggrek Bulan"></div>
-                                <div class="form-group"><label>Tanggal Pemantauan</label><input type="date" id="lacak-tanggal"></div>
+                                <div class="form-group"><label>Nama Tumbuhan</label><input type="text" id="lacak-nama"
+                                        placeholder="Contoh: Anggrek Bulan"></div>
+                                <div class="form-group"><label>Tanggal Pemantauan</label><input type="date"
+                                        id="lacak-tanggal"></div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Tinggi Tanaman</label>
                                     <div style="display: flex; gap: 10px;">
-                                        <input type="number" id="lacak-tinggi" placeholder="Contoh: 25" style="flex: 1;">
-                                        <select id="lacak-tinggi-satuan" style="width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                                        <input type="number" id="lacak-tinggi" placeholder="Contoh: 25"
+                                            style="flex: 1;">
+                                        <select id="lacak-tinggi-satuan"
+                                            style="width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
                                             <option value="cm">cm</option>
                                             <option value="m">m</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group"><label>Jumlah Daun</label><input type="number" id="lacak-daun" placeholder="Contoh: 8"></div>
+                                <div class="form-group"><label>Jumlah Daun</label><input type="number" id="lacak-daun"
+                                        placeholder="Contoh: 8"></div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group"><label>Fase Pertumbuhan</label>
@@ -485,9 +587,12 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group"><label>Catatan Tambahan</label><textarea id="lacak-catatan" placeholder="Muncul tunas baru, mulai berbunga, dll." rows="2"></textarea></div>
-                            <div class="form-group"><label>Foto Dokumentasi</label><input type="file" id="lacak-foto" accept="image/*"></div>
-                            <button class="btn-green" onclick="addLacakEntry()"><i class="fas fa-save"></i> Simpan Catatan</button>
+                            <div class="form-group"><label>Catatan Tambahan</label><textarea id="lacak-catatan"
+                                    placeholder="Muncul tunas baru, mulai berbunga, dll." rows="2"></textarea></div>
+                            <div class="form-group"><label>Foto Dokumentasi</label><input type="file" id="lacak-foto"
+                                    accept="image/*"></div>
+                            <button class="btn-green" onclick="addLacakEntry()"><i class="fas fa-save"></i> Simpan
+                                Catatan</button>
                         </div>
                     </div>
 
@@ -517,7 +622,9 @@
                 </div>
             </div>
             <div class="feature-description">
-                <p><strong>Fitur Pengembangan:</strong> Peta persebaran spesies yang informatif, <em>rekomendasi tumbuhan dominan per daerah</em>, <em>informasi tipe habitat</em>, dan <em>visualisasi tingkat keanekaragaman tumbuhan</em> pada wilayah tertentu.</p>
+                <p><strong>Fitur Pengembangan:</strong> Peta persebaran spesies yang informatif, <em>rekomendasi
+                        tumbuhan dominan per daerah</em>, <em>informasi tipe habitat</em>, dan <em>visualisasi tingkat
+                        keanekaragaman tumbuhan</em> pada wilayah tertentu.</p>
             </div>
             <div class="explore-wrapper">
                 <!-- Filters -->
@@ -530,85 +637,127 @@
 
                 <!-- Stats Bar -->
                 <div class="explore-stats">
-                    <div class="explore-stat"><span class="es-num">326.655.687</span><span class="es-label">PENGAMATAN</span></div>
-                    <div class="explore-stat"><span class="es-num">570.234</span><span class="es-label">SPESIES</span></div>
-                    <div class="explore-stat"><span class="es-num">507.949</span><span class="es-label">PENGIDENTIFIKASI</span></div>
-                    <div class="explore-stat"><span class="es-num">3.500.000+</span><span class="es-label">PENGAMAT</span></div>
+                    <div class="explore-stat"><span class="es-num">326.655.687</span><span
+                            class="es-label">PENGAMATAN</span></div>
+                    <div class="explore-stat"><span class="es-num">570.234</span><span class="es-label">SPESIES</span>
+                    </div>
+                    <div class="explore-stat"><span class="es-num">507.949</span><span
+                            class="es-label">PENGIDENTIFIKASI</span></div>
+                    <div class="explore-stat"><span class="es-num">3.500.000+</span><span
+                            class="es-label">PENGAMAT</span></div>
                 </div>
 
                 <!-- Region Info Cards -->
                 <div class="explore-region-cards" id="explore-region-cards">
-                    <div class="region-card" onclick="setExploreLocation('Sumatera')" title="Cari observasi di Sumatera">
+                    <div class="region-card" onclick="setExploreLocation('Sumatera')"
+                        title="Cari observasi di Sumatera">
                         <h4><i class="fas fa-map-marker-alt"></i> Sumatera</h4>
-                        <div class="region-stats"><span>🌿 15.000+ spesies</span><span>🌳 Habitat: Hutan Hujan Tropis & Gambut</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Bunga Bangkai, Rafflesia arnoldii, Meranti, Andalas</p>
-                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span></div>
+                        <div class="region-stats"><span>🌿 15.000+ spesies</span><span>🌳 Habitat: Hutan Hujan Tropis &
+                                Gambut</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Bunga Bangkai, Rafflesia
+                            arnoldii, Meranti, Andalas</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span>
+                        </div>
                     </div>
                     <div class="region-card" onclick="setExploreLocation('Jawa')" title="Cari observasi di Jawa">
                         <h4><i class="fas fa-map-marker-alt"></i> Jawa</h4>
-                        <div class="region-stats"><span>🌿 6.000+ spesies</span><span>🌳 Habitat: Hutan Musim, Pegunungan</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Jati, Edelweiss Jawa, Kepel, Bunga Sandat</p>
-                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Sangat Tinggi</span></div>
+                        <div class="region-stats"><span>🌿 6.000+ spesies</span><span>🌳 Habitat: Hutan Musim,
+                                Pegunungan</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Jati, Edelweiss Jawa,
+                            Kepel, Bunga Sandat</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Sangat
+                                Tinggi</span></div>
                     </div>
-                    <div class="region-card" onclick="setExploreLocation('Kalimantan')" title="Cari observasi di Kalimantan">
+                    <div class="region-card" onclick="setExploreLocation('Kalimantan')"
+                        title="Cari observasi di Kalimantan">
                         <h4><i class="fas fa-map-marker-alt"></i> Kalimantan</h4>
-                        <div class="region-stats"><span>🌿 20.000+ spesies</span><span>🌳 Habitat: Hutan Hujan & Rawa Gambut</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Kantong Semar, Anggrek Hitam, Kayu Ulin</p>
-                        <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat Tinggi</span></div>
+                        <div class="region-stats"><span>🌿 20.000+ spesies</span><span>🌳 Habitat: Hutan Hujan & Rawa
+                                Gambut</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Kantong Semar, Anggrek
+                            Hitam, Kayu Ulin</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat
+                                Tinggi</span></div>
                     </div>
                     <div class="region-card" onclick="setExploreLocation('Papua')" title="Cari observasi di Papua">
                         <h4><i class="fas fa-map-marker-alt"></i> Papua</h4>
-                        <div class="region-stats"><span>🌿 25.000+ spesies</span><span>🌳 Habitat: Hutan Hujan, Mangrove, Alpin</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Matoa, Sagu, Anggrek Papua, Buah Merah</p>
-                        <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat Tinggi</span></div>
+                        <div class="region-stats"><span>🌿 25.000+ spesies</span><span>🌳 Habitat: Hutan Hujan,
+                                Mangrove, Alpin</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Matoa, Sagu, Anggrek
+                            Papua, Buah Merah</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat
+                                Tinggi</span></div>
                     </div>
-                    <div class="region-card" onclick="setExploreLocation('Sulawesi')" title="Cari observasi di Sulawesi">
+                    <div class="region-card" onclick="setExploreLocation('Sulawesi')"
+                        title="Cari observasi di Sulawesi">
                         <h4><i class="fas fa-map-marker-alt"></i> Sulawesi</h4>
-                        <div class="region-stats"><span>🌿 10.000+ spesies</span><span>🌳 Habitat: Hutan Pegunungan & Karst</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Kayu Eboni, Anggrek Serat, Banyan</p>
-                        <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat Tinggi</span></div>
+                        <div class="region-stats"><span>🌿 10.000+ spesies</span><span>🌳 Habitat: Hutan Pegunungan &
+                                Karst</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Kayu Eboni, Anggrek
+                            Serat, Banyan</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat
+                                Tinggi</span></div>
                     </div>
-                    <div class="region-card" onclick="setExploreLocation('Bali')" title="Cari observasi di Bali & Nusa Tenggara">
+                    <div class="region-card" onclick="setExploreLocation('Bali')"
+                        title="Cari observasi di Bali & Nusa Tenggara">
                         <h4><i class="fas fa-map-marker-alt"></i> Bali & Nusa Tenggara</h4>
-                        <div class="region-stats"><span>🌿 5.000+ spesies</span><span>🌳 Habitat: Sabana, Pesisir, Musim</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Cendana, Pohon Lontar, Ampupu</p>
-                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span></div>
+                        <div class="region-stats"><span>🌿 5.000+ spesies</span><span>🌳 Habitat: Sabana, Pesisir,
+                                Musim</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Cendana, Pohon Lontar,
+                            Ampupu</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span>
+                        </div>
                     </div>
-                    
+
                     <!-- Hidden Extra Cards -->
-                    <div class="region-card extra-region hidden-region" onclick="setExploreLocation('Maluku')" title="Cari observasi di Maluku">
+                    <div class="region-card extra-region hidden-region" onclick="setExploreLocation('Maluku')"
+                        title="Cari observasi di Maluku">
                         <h4><i class="fas fa-map-marker-alt"></i> Maluku</h4>
-                        <div class="region-stats"><span>🌿 8.000+ spesies</span><span>🌳 Habitat: Hutan Hujan Kepulauan</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Pala, Cengkeh, Sagu, Anggrek Larat</p>
-                        <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat Tinggi</span></div>
+                        <div class="region-stats"><span>🌿 8.000+ spesies</span><span>🌳 Habitat: Hutan Hujan
+                                Kepulauan</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Pala, Cengkeh, Sagu,
+                            Anggrek Larat</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-vhigh">Keanekaragaman Sangat
+                                Tinggi</span></div>
                     </div>
-                    <div class="region-card extra-region hidden-region" onclick="setExploreLocation('Kepulauan Riau')" title="Cari observasi di Riau & Kepulauan Riau">
+                    <div class="region-card extra-region hidden-region" onclick="setExploreLocation('Kepulauan Riau')"
+                        title="Cari observasi di Riau & Kepulauan Riau">
                         <h4><i class="fas fa-map-marker-alt"></i> Riau & Kepulauan Riau</h4>
-                        <div class="region-stats"><span>🌿 4.500+ spesies</span><span>🌳 Habitat: Hutan Rawa Gambut & Pesisir</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Nibung, Bintangur, Meranti Paya</p>
-                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span></div>
+                        <div class="region-stats"><span>🌿 4.500+ spesies</span><span>🌳 Habitat: Hutan Rawa Gambut &
+                                Pesisir</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Nibung, Bintangur,
+                            Meranti Paya</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-high">Keanekaragaman Tinggi</span>
+                        </div>
                     </div>
-                    <div class="region-card extra-region hidden-region" onclick="setExploreLocation('Bangka Belitung')" title="Cari observasi di Bangka Belitung">
+                    <div class="region-card extra-region hidden-region" onclick="setExploreLocation('Bangka Belitung')"
+                        title="Cari observasi di Bangka Belitung">
                         <h4><i class="fas fa-map-marker-alt"></i> Bangka Belitung</h4>
-                        <div class="region-stats"><span>🌿 3.000+ spesies</span><span>🌳 Habitat: Hutan Kerangas, Hutan Pesisir</span></div>
-                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Pelawan, Gaharu, Kantong Semar Babel</p>
-                        <div class="region-biodiv"><span class="biodiv-badge biodiv-medium">Keanekaragaman Sedang</span></div>
+                        <div class="region-stats"><span>🌿 3.000+ spesies</span><span>🌳 Habitat: Hutan Kerangas, Hutan
+                                Pesisir</span></div>
+                        <p class="region-dominant"><strong>Tumbuhan Dominan & Endemik:</strong> Pelawan, Gaharu, Kantong
+                            Semar Babel</p>
+                        <div class="region-biodiv"><span class="biodiv-badge biodiv-medium">Keanekaragaman Sedang</span>
+                        </div>
                     </div>
                 </div>
 
                 <div style="text-align: center; margin-top: 15px; margin-bottom: 30px;">
-                    <button class="btn-outline-sm" id="btn-more-regions" onclick="toggleExtraRegions()"><i class="fas fa-chevron-down"></i> Selengkapnya</button>
+                    <button class="btn-outline-sm" id="btn-more-regions" onclick="toggleExtraRegions()"><i
+                            class="fas fa-chevron-down"></i> Selengkapnya</button>
                 </div>
 
                 <!-- View Switcher -->
                 <div class="explore-views" id="explore-views">
                     <button class="view-btn" onclick="switchExploreView('map')"><i class="fas fa-map"></i> Peta</button>
-                    <button class="view-btn active" onclick="switchExploreView('grid')"><i class="fas fa-th"></i> Grid</button>
-                    <button class="view-btn" onclick="switchExploreView('list')"><i class="fas fa-list"></i> Daftar</button>
+                    <button class="view-btn active" onclick="switchExploreView('grid')"><i class="fas fa-th"></i>
+                        Grid</button>
+                    <button class="view-btn" onclick="switchExploreView('list')"><i class="fas fa-list"></i>
+                        Daftar</button>
                 </div>
 
                 <!-- Map View -->
-                <div class="explore-map hidden" id="explore-map-view" style="position: relative; overflow: hidden; background: #e9e5df; z-index: 1;">
+                <div class="explore-map hidden" id="explore-map-view"
+                    style="position: relative; overflow: hidden; background: #e9e5df; z-index: 1;">
                     <div id="real-map" style="width: 100%; height: 100%;"></div>
                 </div>
 
@@ -616,14 +765,23 @@
                 <div class="explore-grid-container" id="explore-grid-view">
                     <div class="obs-grid" id="obs-grid">
                         <!-- Data will be loaded from Supabase dynamically -->
-                        <div style="text-align: center; padding: 40px; grid-column: 1/-1;">Memuat data observasi...</div>
+                        <div style="text-align: center; padding: 40px; grid-column: 1/-1;">Memuat data observasi...
+                        </div>
                     </div>
                 </div>
 
                 <!-- List View -->
                 <div class="explore-list hidden" id="explore-list-view">
                     <table class="obs-table">
-                        <thead><tr><th>Spesies</th><th>Nama Ilmiah</th><th>Lokasi</th><th>Habitat</th><th>Waktu</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Spesies</th>
+                                <th>Nama Ilmiah</th>
+                                <th>Lokasi</th>
+                                <th>Habitat</th>
+                                <th>Waktu</th>
+                            </tr>
+                        </thead>
                         <tbody id="obs-list-body">
                             <!-- Data will be loaded from Supabase dynamically -->
                         </tbody>
@@ -641,7 +799,9 @@
                 </div>
             </div>
             <div class="feature-description">
-                <p><strong>Fitur Pengembangan:</strong> Sistem laporan biodiversitas otomatis, <em>rangkuman jumlah spesies, famili, dan lokasi observasi</em>, serta <em>sistem penghargaan badge dan poin</em> untuk meningkatkan partisipasi citizen science.</p>
+                <p><strong>Fitur Pengembangan:</strong> Sistem laporan biodiversitas otomatis, <em>rangkuman jumlah
+                        spesies, famili, dan lokasi observasi</em>, serta <em>sistem penghargaan badge dan poin</em>
+                    untuk meningkatkan partisipasi citizen science.</p>
             </div>
             <div class="kontribusi-wrapper">
                 <!-- User Stats Summary -->
@@ -683,14 +843,46 @@
                     <div class="kontrib-panel">
                         <h3><i class="fas fa-trophy"></i> Penghargaan & Badge</h3>
                         <div class="badge-grid">
-                            <div class="badge-item" id="badge-pemula"><div class="badge-icon">🌱</div><div class="badge-name">Pemula</div><div class="badge-desc">Unggah observasi pertama</div></div>
-                            <div class="badge-item" id="badge-fotografer"><div class="badge-icon">📸</div><div class="badge-name">Fotografer Alam</div><div class="badge-desc">Unggah 10 foto</div></div>
-                            <div class="badge-item" id="badge-pengidentifikasi"><div class="badge-icon">🔍</div><div class="badge-name">Pengidentifikasi</div><div class="badge-desc">Bantu identifikasi 5 spesies</div></div>
-                            <div class="badge-item" id="badge-botanis"><div class="badge-icon">🌿</div><div class="badge-name">Botanis Muda</div><div class="badge-desc">Identifikasi 25 tumbuhan berbeda</div></div>
-                            <div class="badge-item" id="badge-penjelajah"><div class="badge-icon">🗺️</div><div class="badge-name">Penjelajah</div><div class="badge-desc">Observasi di 5 provinsi berbeda</div></div>
-                            <div class="badge-item" id="badge-ekologi"><div class="badge-icon">🏆</div><div class="badge-name">Ahli Ekologi</div><div class="badge-desc">Capai 1000 poin kontribusi</div></div>
-                            <div class="badge-item" id="badge-research"><div class="badge-icon">📊</div><div class="badge-name">Research Grade</div><div class="badge-desc">10 observasi mencapai Research Grade</div></div>
-                            <div class="badge-item" id="badge-citizen"><div class="badge-icon">🌍</div><div class="badge-name">Citizen Scientist</div><div class="badge-desc">Data digunakan dalam publikasi</div></div>
+                            <div class="badge-item" id="badge-pemula">
+                                <div class="badge-icon">🌱</div>
+                                <div class="badge-name">Pemula</div>
+                                <div class="badge-desc">Unggah observasi pertama</div>
+                            </div>
+                            <div class="badge-item" id="badge-fotografer">
+                                <div class="badge-icon">📸</div>
+                                <div class="badge-name">Fotografer Alam</div>
+                                <div class="badge-desc">Unggah 10 foto</div>
+                            </div>
+                            <div class="badge-item" id="badge-pengidentifikasi">
+                                <div class="badge-icon">🔍</div>
+                                <div class="badge-name">Pengidentifikasi</div>
+                                <div class="badge-desc">Bantu identifikasi 5 spesies</div>
+                            </div>
+                            <div class="badge-item" id="badge-botanis">
+                                <div class="badge-icon">🌿</div>
+                                <div class="badge-name">Botanis Muda</div>
+                                <div class="badge-desc">Identifikasi 25 tumbuhan berbeda</div>
+                            </div>
+                            <div class="badge-item" id="badge-penjelajah">
+                                <div class="badge-icon">🗺️</div>
+                                <div class="badge-name">Penjelajah</div>
+                                <div class="badge-desc">Observasi di 5 provinsi berbeda</div>
+                            </div>
+                            <div class="badge-item" id="badge-ekologi">
+                                <div class="badge-icon">🏆</div>
+                                <div class="badge-name">Ahli Ekologi</div>
+                                <div class="badge-desc">Capai 1000 poin kontribusi</div>
+                            </div>
+                            <div class="badge-item" id="badge-research">
+                                <div class="badge-icon">📊</div>
+                                <div class="badge-name">Research Grade</div>
+                                <div class="badge-desc">10 observasi mencapai Research Grade</div>
+                            </div>
+                            <div class="badge-item" id="badge-citizen">
+                                <div class="badge-icon">🌍</div>
+                                <div class="badge-name">Citizen Scientist</div>
+                                <div class="badge-desc">Data digunakan dalam publikasi</div>
+                            </div>
                         </div>
                     </div>
 
@@ -714,7 +906,8 @@
                 <!-- Help Identify Section -->
                 <div class="kontrib-panel kontrib-help">
                     <h3><i class="fas fa-hands-helping"></i> Bantu Identifikasi Pengamatan Lain</h3>
-                    <p class="kontrib-help-desc">Kontribusikan keahlian Anda dengan membantu mengidentifikasi spesies yang diunggah pengguna lain. Setiap identifikasi yang tepat memberikan +10 poin.</p>
+                    <p class="kontrib-help-desc">Kontribusikan keahlian Anda dengan membantu mengidentifikasi spesies
+                        yang diunggah pengguna lain. Setiap identifikasi yang tepat memberikan +10 poin.</p>
                     <div class="help-cards" id="help-identify-container">
                         <!-- Data akan dimuat secara dinamis dari Supabase -->
                         <div style="text-align: center; width: 100%; padding: 20px; color: #666;">
@@ -734,7 +927,9 @@
                 </div>
             </div>
             <div class="feature-description">
-                <p><strong>Fitur Pengembangan:</strong> Media pembelajaran interaktif: <em>materi singkat ekologi tumbuhan</em>, <em>kuis evaluasi pemahaman</em>, dan <em>penjelasan peran ekologis spesies</em> (fungsi, adaptasi, kontribusi dalam ekosistem).</p>
+                <p><strong>Fitur Pengembangan:</strong> Media pembelajaran interaktif: <em>materi singkat ekologi
+                        tumbuhan</em>, <em>kuis evaluasi pemahaman</em>, dan <em>penjelasan peran ekologis spesies</em>
+                    (fungsi, adaptasi, kontribusi dalam ekosistem).</p>
             </div>
             <div class="belajar-wrapper">
                 <!-- Learning Modules -->
@@ -744,37 +939,43 @@
                         <div class="module-card" onclick="toggleModule('mod1')">
                             <div class="module-icon">🌱</div>
                             <h4>Fotosintesis & Produktivitas Primer</h4>
-                            <p>Bagaimana tumbuhan mengubah cahaya matahari menjadi energi dan perannya sebagai produsen dalam rantai makanan.</p>
+                            <p>Bagaimana tumbuhan mengubah cahaya matahari menjadi energi dan perannya sebagai produsen
+                                dalam rantai makanan.</p>
                             <span class="module-tag">Ekologi Dasar</span>
                         </div>
                         <div class="module-card" onclick="toggleModule('mod2')">
                             <div class="module-icon">🌿</div>
                             <h4>Adaptasi Tumbuhan Tropis</h4>
-                            <p>Strategi bertahan hidup tumbuhan Indonesia: daun lebar, akar gantung, epifit, dan simbiosis mikoriza.</p>
+                            <p>Strategi bertahan hidup tumbuhan Indonesia: daun lebar, akar gantung, epifit, dan
+                                simbiosis mikoriza.</p>
                             <span class="module-tag">Ekologi Tumbuhan</span>
                         </div>
                         <div class="module-card" onclick="toggleModule('mod3')">
                             <div class="module-icon">🌺</div>
                             <h4>Penyerbukan & Keanekaragaman</h4>
-                            <p>Interaksi tumbuhan-hewan dalam penyerbukan dan bagaimana hal ini menjaga keanekaragaman genetik.</p>
+                            <p>Interaksi tumbuhan-hewan dalam penyerbukan dan bagaimana hal ini menjaga keanekaragaman
+                                genetik.</p>
                             <span class="module-tag">Interaksi Ekologi</span>
                         </div>
                         <div class="module-card" onclick="toggleModule('mod4')">
                             <div class="module-icon">🌳</div>
                             <h4>Suksesi & Restorasi Ekosistem</h4>
-                            <p>Bagaimana hutan pulih setelah gangguan dan peran tumbuhan perintis dalam restorasi lahan.</p>
+                            <p>Bagaimana hutan pulih setelah gangguan dan peran tumbuhan perintis dalam restorasi lahan.
+                            </p>
                             <span class="module-tag">Ekologi Komunitas</span>
                         </div>
                         <div class="module-card" onclick="toggleModule('mod5')">
                             <div class="module-icon">🍃</div>
                             <h4>Jasa Ekosistem Tumbuhan</h4>
-                            <p>Peran tumbuhan: penyerapan karbon, pencegahan erosi, siklus air, dan penyedia oksigen.</p>
+                            <p>Peran tumbuhan: penyerapan karbon, pencegahan erosi, siklus air, dan penyedia oksigen.
+                            </p>
                             <span class="module-tag">Ekologi Lingkungan</span>
                         </div>
                         <div class="module-card" onclick="toggleModule('mod6')">
                             <div class="module-icon">🔬</div>
                             <h4>Etnobotani Indonesia</h4>
-                            <p>Hubungan antara masyarakat tradisional Indonesia dengan tumbuhan obat, pangan, dan ritual.</p>
+                            <p>Hubungan antara masyarakat tradisional Indonesia dengan tumbuhan obat, pangan, dan
+                                ritual.</p>
                             <span class="module-tag">Etnobotani</span>
                         </div>
                         <div class="module-card" onclick="toggleModule('mod7')">
@@ -786,7 +987,8 @@
                         <div class="module-card" onclick="toggleModule('mod8')">
                             <div class="module-icon">📊</div>
                             <h4>Indeks Keanekaragaman Hayati</h4>
-                            <p>Pemahaman dan perhitungan Indeks Shannon-Wiener untuk mengetahui keseimbangan ekosistem.</p>
+                            <p>Pemahaman dan perhitungan Indeks Shannon-Wiener untuk mengetahui keseimbangan ekosistem.
+                            </p>
                             <span class="module-tag">Biodiversitas</span>
                         </div>
                     </div>
@@ -795,7 +997,9 @@
                 <!-- Module Detail (expandable) -->
                 <div class="module-detail hidden" id="module-detail">
                     <div class="module-detail-inner">
-                        <button class="btn-close-module" onclick="document.getElementById('module-detail').classList.add('hidden')"><i class="fas fa-times"></i></button>
+                        <button class="btn-close-module"
+                            onclick="document.getElementById('module-detail').classList.add('hidden')"><i
+                                class="fas fa-times"></i></button>
                         <div id="module-content"></div>
                     </div>
                 </div>
@@ -805,19 +1009,26 @@
                     <h3><i class="fas fa-tree"></i> Peran Ekologis Spesies yang Diidentifikasi</h3>
                     <div class="eco-role-cards" id="eco-role-container">
                         <div class="eco-card">
-                            <div class="eco-species"><strong>Anggrek Bulan</strong> (<em>Phalaenopsis amabilis</em>)</div>
+                            <div class="eco-species"><strong>Anggrek Bulan</strong> (<em>Phalaenopsis amabilis</em>)
+                            </div>
                             <div class="eco-roles">
-                                <div class="eco-role"><i class="fas fa-bug"></i><strong>Fungsi:</strong> Indikator kesehatan hutan; epifit yang bergantung pada kelembapan tinggi</div>
-                                <div class="eco-role"><i class="fas fa-dna"></i><strong>Adaptasi:</strong> Akar aerial untuk menyerap kelembapan udara; daun tebal untuk menyimpan air</div>
-                                <div class="eco-role"><i class="fas fa-link"></i><strong>Kontribusi:</strong> Menyediakan habitat mikro bagi serangga; indikator kualitas ekosistem hutan</div>
+                                <div class="eco-role"><i class="fas fa-bug"></i><strong>Fungsi:</strong> Indikator
+                                    kesehatan hutan; epifit yang bergantung pada kelembapan tinggi</div>
+                                <div class="eco-role"><i class="fas fa-dna"></i><strong>Adaptasi:</strong> Akar aerial
+                                    untuk menyerap kelembapan udara; daun tebal untuk menyimpan air</div>
+                                <div class="eco-role"><i class="fas fa-link"></i><strong>Kontribusi:</strong>
+                                    Menyediakan habitat mikro bagi serangga; indikator kualitas ekosistem hutan</div>
                             </div>
                         </div>
                         <div class="eco-card">
                             <div class="eco-species"><strong>Rafflesia</strong> (<em>Rafflesia arnoldii</em>)</div>
                             <div class="eco-roles">
-                                <div class="eco-role"><i class="fas fa-bug"></i><strong>Fungsi:</strong> Parasit holoparasit pada akar liana Tetrastigma; spesies payung konservasi</div>
-                                <div class="eco-role"><i class="fas fa-dna"></i><strong>Adaptasi:</strong> Tidak memiliki daun, batang, atau akar sejati; bergantung penuh pada inang</div>
-                                <div class="eco-role"><i class="fas fa-link"></i><strong>Kontribusi:</strong> Spesies karismatik yang mendorong konservasi hutan hujan</div>
+                                <div class="eco-role"><i class="fas fa-bug"></i><strong>Fungsi:</strong> Parasit
+                                    holoparasit pada akar liana Tetrastigma; spesies payung konservasi</div>
+                                <div class="eco-role"><i class="fas fa-dna"></i><strong>Adaptasi:</strong> Tidak
+                                    memiliki daun, batang, atau akar sejati; bergantung penuh pada inang</div>
+                                <div class="eco-role"><i class="fas fa-link"></i><strong>Kontribusi:</strong> Spesies
+                                    karismatik yang mendorong konservasi hutan hujan</div>
                             </div>
                         </div>
                     </div>
@@ -831,7 +1042,8 @@
             <div class="page-header-bar">
                 <div class="page-container">
                     <h2 id="generic-title">Halaman</h2>
-                    <button class="btn-back" onclick="goBack()" style="float: right; margin-top: -30px;"><i class="fas fa-arrow-left"></i> Kembali</button>
+                    <button class="btn-back" onclick="goBack()" style="float: right; margin-top: -30px;"><i
+                            class="fas fa-arrow-left"></i> Kembali</button>
                 </div>
             </div>
             <div id="generic-content" class="page-container" style="min-height: 50vh; padding: 40px 20px;">
@@ -864,7 +1076,10 @@
                 </div>
                 <div class="footer-social">
                     <a href="#" title="Facebook">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="#1877F2">
+                            <path
+                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
                     </a>
                     <a href="#" title="Instagram">
                         <svg viewBox="0 0 24 24" width="16" height="16">
@@ -875,11 +1090,15 @@
                                     <stop offset="100%" stop-color="#285AEB" />
                                 </linearGradient>
                             </defs>
-                            <path fill="url(#ig-grad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                            <path fill="url(#ig-grad)"
+                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
                         </svg>
                     </a>
                     <a href="#" title="X (Twitter)">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="#000000"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="#000000">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -896,29 +1115,43 @@
             <div class="modal-logo"><span class="logo-i">i</span><span class="logo-text">Naturalist</span></div>
             <!-- Single Unified Auth Form -->
             <div id="auth-main-section">
-                <form id="form-auth-unified" class="auth-form active" style="margin-top: 15px;" onsubmit="return false;">
-                    <div class="form-group"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="nama@email.com" required></div>
-                    <div class="form-group"><label for="auth-password">Kata Sandi</label><input type="password" id="auth-password" placeholder="Minimal 6 karakter" required></div>
-                    
+                <form id="form-auth-unified" class="auth-form active" style="margin-top: 15px;"
+                    onsubmit="return false;">
+                    <div class="form-group"><label for="auth-email">Email</label><input type="email" id="auth-email"
+                            placeholder="nama@email.com" required></div>
+                    <div class="form-group"><label for="auth-password">Kata Sandi</label><input type="password"
+                            id="auth-password" placeholder="Minimal 6 karakter" required></div>
+
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
                         <button class="btn-green" style="flex: 1;" id="btn-submit-login">Masuk</button>
-                        <button class="btn-green" style="flex: 1; background-color: #f1f5f9; color: #333; border: 1px solid #ccc;" id="btn-submit-register">Buat Akun</button>
+                        <button class="btn-green"
+                            style="flex: 1; background-color: #f1f5f9; color: #333; border: 1px solid #ccc;"
+                            id="btn-submit-register">Buat Akun</button>
                     </div>
                     <p id="auth-error" class="error-msg"></p>
                 </form>
 
                 <div class="auth-divider"><span>ATAU</span></div>
-                
+
                 <button class="btn-google" id="btn-google-auth">
                     <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        <path
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+                            fill="#4285F4" />
+                        <path
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                            fill="#34A853" />
+                        <path
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                            fill="#FBBC05" />
+                        <path
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                            fill="#EA4335" />
                     </svg>
                     Lanjutkan dengan Google
                 </button>
-                <button class="btn-google" id="btn-anon-auth" style="margin-top: 10px; background-color: #f1f5f9; color: #333; border: 1px solid #ddd;">
+                <button class="btn-google" id="btn-anon-auth"
+                    style="margin-top: 10px; background-color: #f1f5f9; color: #333; border: 1px solid #ddd;">
                     <i class="fas fa-user-secret google-icon" style="color:#555; width:20px; text-align:center;"></i>
                     Lanjutkan sebagai Tamu
                 </button>
@@ -950,7 +1183,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="config.js?v=2"></script>
     <script src="auth.js?v=2"></script>
     <script src="app.js?v=2"></script>
@@ -965,4 +1199,5 @@
         }
     </script>
 </body>
+
 </html>
